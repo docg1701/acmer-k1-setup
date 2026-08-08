@@ -145,14 +145,14 @@ ssh galvani@10.10.10.190
 ## 3. Instalação do cncjs
 
 ```bash
-# Node.js + npm (Debian 12/13 já trazem versão suficiente — cncjs aceita Node 4+)
+# Node.js + npm (Debian 13 traz Node 20.x — cncjs pede ≥12)
 sudo apt install -y nodejs npm
 
 # cncjs (instalação global; --unsafe-perm é exigido com sudo)
 sudo npm install --unsafe-perm -g cncjs@latest
 
 # Confirmar versão (deve mostrar 1.11.x)
-cnc -V
+cncjs --version
 ```
 
 ### 3.1. Configuração mínima (`~/.cncrc`)
@@ -171,6 +171,7 @@ EOF
 - `controller: Grbl` — a K1 é GRBL
 - `baudrates: 115200` — baud da K1 (confirmado na config atual do Rayforge)
 - `watchDirectory` — pasta monitorada: arquivos jogados ali aparecem na web UI
+- O cncjs adiciona automaticamente `state` e `secret` ao salvar preferências pela web UI
 
 ### 3.2. Serviço systemd (sobe sozinho no boot)
 
@@ -184,7 +185,7 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=galvani
-ExecStart=/usr/bin/cnc -l 0.0.0.0 -p 8000 --controller Grbl
+ExecStart=/usr/local/bin/cncjs -H 0.0.0.0 -p 8000 --controller Grbl
 Restart=on-failure
 RestartSec=5
 
@@ -198,7 +199,7 @@ sudo systemctl enable --now cncjs.service
 ss -ltn | grep 8000
 ```
 
-> Se `which cnc` mostrar outro caminho, ajuste o `ExecStart`.
+> Se `which cncjs` mostrar outro caminho, ajuste o `ExecStart`.
 
 ---
 

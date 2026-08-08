@@ -10,7 +10,7 @@ Idioma: **pt-BR**. Sem código — apenas manuais, tabelas e configurações.
 
 - **Máquina**: ACMER K1 7W, GRBL 1.1h fork ACMER, USB serial `/dev/ttyACM0` 115200, sem WiFi
 - **Design**: Rayforge 1.8.5 Flatpak (`org.rayforge.rayforge`), código-fonte em `/var/lib/flatpak/app/org.rayforge.rayforge/`
-- **Servidor**: Debian 13 (console) + cncjs 1.11.x (Node), porta 8000, hostname `printbox`
+- **Servidor**: Debian 13 (console) + cncjs 1.11.2 (Node 20), porta 8000, hostname `printbox`
 - **Rede**: servidor IP fixo `10.10.10.190/24`, gateway `10.10.10.1`, hostname `printbox` / `printbox.local`
 - **Usuário**: `galvani` (servidor)
 
@@ -49,7 +49,7 @@ Idioma: **pt-BR**. Sem código — apenas manuais, tabelas e configurações.
 pdftotext -layout docs/ACMER-K1-User-Manual-EN.pdf /tmp/k1_manual.txt
 
 # Versão do cncjs no servidor
-cnc -V
+cncjs --version
 
 # Código-fonte do Rayforge
 find /var/lib/flatpak/app/org.rayforge.rayforge -name "*.py" -path "*/rayforge/*"
