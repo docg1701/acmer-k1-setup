@@ -30,8 +30,8 @@ máquina, byte por byte. Nada se repete no servidor.
 1. Baixe o **Debian netinst amd64**: <https://www.debian.org/distrib/>
 2. Grave num pendrive (ex.: `dd if=debian.iso of=/dev/sdX bs=4M status=progress`)
 3. Boot pelo pendrive e instale:
-   - **Hostname**: `servidor-k1`
-   - **Usuário**: crie um usuário normal (ex.: `galvani`) + senha
+   - **Hostname**: `printbox`
+   - **Usuário**: `galvani` + senha
    - **Rede**: durante a instalação, conecte no **WiFi** (o instalador configura)
    - **Particionamento**: guided, disco inteiro (o disco não tem nada importante)
    - **Software selection**: marque **SSH server** + **standard system utilities**

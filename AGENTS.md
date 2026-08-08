@@ -10,9 +10,9 @@ Idioma: **pt-BR**. Sem código — apenas manuais, tabelas e configurações.
 
 - **Máquina**: ACMER K1 7W, GRBL 1.1h fork ACMER, USB serial `/dev/ttyACM0` 115200, sem WiFi
 - **Design**: Rayforge 1.8.5 Flatpak (`org.rayforge.rayforge`), código-fonte em `/var/lib/flatpak/app/org.rayforge.rayforge/`
-- **Servidor**: Debian netinst (console) + cncjs 1.11.x (Node), porta 8000
-- **Rede**: servidor IP fixo `10.10.10.190/24`, gateway `10.10.10.1`
-- **Usuário**: `galvani` (servidor e máquina local)
+- **Servidor**: Debian 13 (console) + cncjs 1.11.x (Node), porta 8000, hostname `printbox`
+- **Rede**: servidor IP fixo `10.10.10.190/24`, gateway `10.10.10.1`, hostname `printbox` / `printbox.local`
+- **Usuário**: `galvani` (servidor)
 
 ## Source of truth
 
