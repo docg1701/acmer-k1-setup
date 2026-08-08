@@ -7,7 +7,7 @@
 >
 > **Data**: 2026-08-08 · **cncjs v1.11.x** (verificado: releases ativos em 2026)
 
-```
+```text
 [Seu PC]  Rayforge — desenha, configura steps, exporta G-code
     │
     │  WiFi (rede local) — só upload do arquivo
@@ -101,7 +101,7 @@ sudo nano /etc/network/interfaces
 
 Substitua o conteúdo por:
 
-```
+```text
 auto lo
 iface lo inet loopback
 
@@ -206,22 +206,28 @@ ss -ltn | grep 8000
 
 1. **Pluga o cabo USB da K1 no mini PC** e liga a máquina.
 2. Descubra o device:
+
    ```bash
    ls /dev/ttyACM* /dev/ttyUSB*
    ```
+
    → na prática, será `/dev/ttyACM0` (mesmo device que o seu PC usa hoje).
 3. Confirme que é a K1:
+
    ```bash
    lsusb
    ```
+
    (procure pela placa — CH340 aparece como `1a86:7523`, WCH/ACM como CDC)
 
 **Se o device mudar** (K1 religada pode virar `ttyACM1`): reinicie o cncjs:
+
 ```bash
 sudo systemctl restart cncjs
 ```
 
-*(Opcional — nome fixo via udev, para nunca mais depender do número:)*
+### Opcional — nome fixo via udev
+
 ```bash
 # Descubra os IDs da placa:
 udevadm info -a -n /dev/ttyACM0 | grep -E "idVendor|idProduct|serial" | head -6
@@ -232,6 +238,7 @@ SUBSYSTEM=="tty", ATTRS{idVendor}=="XXXX", ATTRS{idProduct}=="YYYY", SYMLINK+="t
 EOF
 sudo udevadm control --reload
 ```
+
 Com isso o device passa a ser `/dev/ttyK1` — selecione ele no cncjs.
 
 ---
@@ -239,7 +246,7 @@ Com isso o device passa a ser `/dev/ttyK1` — selecione ele no cncjs.
 ## 5. Configuração do cncjs (web UI)
 
 1. No browser do seu PC: **`http://10.10.10.190:8000`**
-2. **Connect** (canto superior): 
+2. **Connect** (canto superior):
    - **Controller**: `Grbl`
    - **Serial port**: `/dev/ttyACM0` (ou `/dev/ttyK1` se usou a regra udev)
    - **Baud rate**: `115200`

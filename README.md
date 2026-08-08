@@ -30,7 +30,7 @@ Para quem tem uma ACMER K1 (laser diodo azul 7W, 455nm, 150×150mm, GRBL) e quer
 
 ## Stack
 
-```
+```text
 [PC] Rayforge (Flatpak) — desenho, steps, export G-code
  │
  │  WiFi — upload do arquivo

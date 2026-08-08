@@ -49,6 +49,7 @@ a potência). É voltada para iniciantes, DIY, artesanato e pequenos negócios.
 ### 1.4 Foco
 
 Processo simples, com folha de medição de distância focal incluída:
+
 1. Coloque a folha sobre o material.
 2. Solte o botão lateral.
 3. Deslize o módulo laser para baixo até o bico tocar a folha.
@@ -99,14 +100,16 @@ Página oficial de downloads: `https://acmerlaser.com/pages/download`
 
 ### 1.9 Pontos fortes e fracos (resumo de reviews)
 
-**Prós**
+### Prós
+
 - Encaixotada Classe 1 — segura para casa, sem óculos obrigatórios.
 - Portátil (2,4 kg), montagem instantânea.
 - Barata para o que oferece (7W: US$ 299; 12W: US$ 359; 3.5W: US$ 259; 2.5W: US$ 199).
 - Silenciosa (59–61 dB), LED interno ilumina a área de trabalho.
 - Compatível com LightBurn/LaserGRBL/Rayforge (padrão GRBL).
 
-**Contras**
+### Contras
+
 - Área de trabalho pequena (150 × 150 mm).
 - Sem air assist de fábrica → corte mais lento e bordas piores que lasers
   abertos de mesma potência.
@@ -137,9 +140,9 @@ em **GRBL, Marlin, Ruida e Smoothieware** (e OctoPrint). Feito com GTK4 e
 Libadwaita, com interface nativa para **Linux, macOS e Windows**. Gratuito —
 diferente do LightBurn (pago) e mais completo que o AcmerTool.
 
-- Site: https://rayforge.org
-- Código: https://github.com/barebaric/rayforge
-- Discord: https://discord.gg/sTHNdTtpQJ
+- Site: <https://rayforge.org>
+- Código: <https://github.com/barebaric/rayforge>
+- Discord: <https://discord.gg/sTHNdTtpQJ>
 - Autor: Samuel Abels (knipknap)
 - Idiomas: inglês, português, espanhol, alemão, francês, ucraniano e chinês
 
@@ -153,7 +156,8 @@ diferente do LightBurn (pago) e mais completo que o AcmerTool.
 
 ### 2.3 Funcionalidades principais
 
-**Design & edição**
+### Design & edição
+
 - Editor de sketch paramétrico (restrições geométricas e dimensionais).
 - Canvas 2D completo: alinhamento, transformação, medição, zoom, pan.
 - Operações por camada (ex.: gravar e depois cortar no mesmo job).
@@ -162,7 +166,8 @@ diferente do LightBurn (pago) e mais completo que o AcmerTool.
 - Importa **SVG, DXF, PDF, JPEG, PNG, BMP, Ruida (.rd) e LightBurn (.lbdev)**;
   exporta SVG e DXF. Projeto próprio em `.ryp` (formato compactado).
 
-**Operações & toolpaths**
+### Operações & toolpaths
+
 - Contorno (corte), gravação raster (com preenchimento cross-hatch),
   shrink wrap, gravação em profundidade (2.5D), e frame.
 - Corte multi-passe com step-down configurável.
@@ -177,7 +182,8 @@ diferente do LightBurn (pago) e mais completo que o AcmerTool.
 - Otimização de percurso (travel time), suavização de caminhos, interpolação
   por tamanho do spot.
 
-**Controle de máquina**
+### Controle de máquina
+
 - Perfis multi-máquina com troca instantânea.
 - 6 sistemas de coordenadas de trabalho (G54–G59) por camada.
 - **No-go zones** (áreas proibidas) com detecção de colisão.
@@ -191,7 +197,8 @@ diferente do LightBurn (pago) e mais completo que o AcmerTool.
 - Pre-flight checks: limites, área de trabalho, no-go zones.
 - Console G-code interativo com syntax highlighting.
 
-**Materiais & presets**
+### Materiais & presets
+
 - Biblioteca com 60+ materiais embutidos + bibliotecas do usuário.
 - Sistema de **receitas** (presets) que casam automaticamente material,
   espessura, máquina e cabeçote.
@@ -199,7 +206,8 @@ diferente do LightBurn (pago) e mais completo que o AcmerTool.
   os parâmetros ideais (com opção air assist e calibração de offset
   bidirecional).
 
-**Workflow & automação**
+### Workflow & automação
+
 - Integração de **câmera USB** (alinhamento, posicionamento, calibração
   fisheye).
 - **Gerador de workpiece por IA** (prompt de texto → SVG) via provedores
@@ -208,7 +216,8 @@ diferente do LightBurn (pago) e mais completo que o AcmerTool.
 - **Modo CLI/headless** para automação em lote.
 - Modo projetor (projeta toolpaths na mesa da máquina).
 
-**Plataforma**
+### Plataforma
+
 - Interface GTK4/Libadwaita com temas system/light/dark.
 - Sistema de addons (gerenciador embutido, comunidade).
 - Suporte a dispositivos: GRBL (serial, telnet, rede WiFi/Ethernet),
@@ -217,7 +226,7 @@ diferente do LightBurn (pago) e mais completo que o AcmerTool.
 
 ### 2.4 Instalação — Flatpak (a versão do usuário, 1.8)
 
-Fonte: https://flathub.org/apps/org.rayforge.rayforge (ID: `org.rayforge.rayforge`)
+Fonte: <https://flathub.org/apps/org.rayforge.rayforge> (ID: `org.rayforge.rayforge`)
 
 ```bash
 # Instalar
@@ -241,6 +250,7 @@ flatpak run org.rayforge.rayforge
 ### 2.5 Instalação — outras formas
 
 **Snap (Linux):**
+
 ```bash
 sudo snap install rayforge
 sudo usermod -a -G dialout $USER   # Debian-based; relogar depois
@@ -251,13 +261,14 @@ snap connections rayforge           # verificar
 ```
 
 **Debian/Ubuntu (PPA):**
+
 ```bash
 # Launchpad PPA: https://launchpad.net/~knipknap/+archive/ubuntu/rayforge
 # pacote .deb também disponível nas releases do GitHub
 ```
 
 **Windows:** instalador `.exe` nas releases do GitHub
-(https://github.com/barebaric/rayforge/releases).
+(<https://github.com/barebaric/rayforge/releases>).
 
 **macOS:** `.dmg`/`.zip` (arm, intel, universal) nas releases.
 
@@ -357,13 +368,17 @@ test grid, biblioteca de materiais, receitas etc.).
 
 1. Instale o Rayforge (Flatpak 1.8 — ver seção 2.4).
 2. Conecte o K1 por USB e verifique o device:
+
    ```bash
    ls -l /dev/ttyUSB* /dev/ttyACM*
    ```
+
 3. Usuário no grupo `dialout` (relogar depois):
+
    ```bash
    sudo usermod -a -G dialout $USER
    ```
+
 4. No wizard da máquina: GRBL → porta serial (`/dev/ttyUSB0` etc.) →
    baud rate do K1 (padrão GRBL: 115200; se falhar, tente 9600/57600) →
    Probe Now.
@@ -470,21 +485,21 @@ que lasers abertos equivalentes.
 
 ## Fontes
 
-1. ACMER K1 oficial (loja): https://acmerlaser.com/products/acmer-k1-enclosed-portable-laser-engraver
-2. ACMER EU: https://eu.acmerlaser.com/products/acmer-k1-enclosed-portable-laser-engraver
-3. Downloads ACMER (drivers/firmware K1): https://acmerlaser.com/pages/download
-4. Review Hoffman Engineering (teste 1 mês, 7W): https://www.hoffman.engineering/blog/acmer-k1-review-portable-laser-worth-buying/
-5. 4evatech (specs detalhadas): https://4evatech.com/acmer-k1/
-6. Rayforge oficial: https://rayforge.org/
-7. Rayforge GitHub: https://github.com/barebaric/rayforge
-8. Rayforge Releases: https://github.com/barebaric/rayforge/releases
-9. Rayforge Flathub (Flatpak 1.8): https://flathub.org/apps/org.rayforge.rayforge
-10. Rayforge Snap: https://snapcraft.io/rayforge
-11. Rayforge Installation: https://rayforge.org/docs/getting-started/installation/
-12. Rayforge First Time Setup: https://rayforge.org/docs/getting-started/first-time-setup/
-13. Rayforge Quick Start: https://rayforge.org/docs/getting-started/quick-start/
-14. Rayforge PyPI: https://pypi.org/project/rayforge/
-15. Reviews em vídeo: https://www.youtube.com/watch?v=UfR1fuH7z_c e https://www.youtube.com/watch?v=WyPaQc8XoEE
+1. ACMER K1 oficial (loja): <https://acmerlaser.com/products/acmer-k1-enclosed-portable-laser-engraver>
+2. ACMER EU: <https://eu.acmerlaser.com/products/acmer-k1-enclosed-portable-laser-engraver>
+3. Downloads ACMER (drivers/firmware K1): <https://acmerlaser.com/pages/download>
+4. Review Hoffman Engineering (teste 1 mês, 7W): <https://www.hoffman.engineering/blog/acmer-k1-review-portable-laser-worth-buying/>
+5. 4evatech (specs detalhadas): <https://4evatech.com/acmer-k1/>
+6. Rayforge oficial: <https://rayforge.org/>
+7. Rayforge GitHub: <https://github.com/barebaric/rayforge>
+8. Rayforge Releases: <https://github.com/barebaric/rayforge/releases>
+9. Rayforge Flathub (Flatpak 1.8): <https://flathub.org/apps/org.rayforge.rayforge>
+10. Rayforge Snap: <https://snapcraft.io/rayforge>
+11. Rayforge Installation: <https://rayforge.org/docs/getting-started/installation/>
+12. Rayforge First Time Setup: <https://rayforge.org/docs/getting-started/first-time-setup/>
+13. Rayforge Quick Start: <https://rayforge.org/docs/getting-started/quick-start/>
+14. Rayforge PyPI: <https://pypi.org/project/rayforge/>
+15. Reviews em vídeo: <https://www.youtube.com/watch?v=UfR1fuH7z_c> e <https://www.youtube.com/watch?v=WyPaQc8XoEE>
 
 ---
 
@@ -522,112 +537,9 @@ Fonte: `ACMER K1-User Manual（English）.pdf` (seção 7, "Recommended paramete
 
 Corte = M3 (laser constante), gravação = M4 (potência dinâmica) — automático no Rayforge. "—" = manual não traz valor. Tabela é para kraft paper; papel comum mais fino pode exigir menos potência (test grid decide).
 
-### Configuração final do Rayforge
+### Configuração final do Rayforge (resumo da Parte 4)
 
-| Seção | Campo | Valor | Fonte |
-|---|---|---|---|
-| Machine | Name | Acmer K1 | — |
-| Driver | GRBL (Serial) | Porta /dev/ttyACM0, baud 115200 | console funcionou |
-| Driver | Poll device status | ON | USB nativo estável |
-| Driver | Deadlock detection | OFF | sem ALARM:3 falso |
-| Driver | RX Buffer Override | 0 (auto) | padrão |
-| Speeds | Max Travel Speed | 3000 (fixo — driver não suporta) | sem impacto real |
-| Speeds | Max Cut Speed | **10000** | $110 |
-| Speeds | Acceleration | **300** | $120 |
-| Axes | X/Y Extent | 150 / 150 | $130/$131 |
-| Axes | Origin | Bottom Left | $22+$23 |
-| Axes | Reverse X/Y/Z | OFF | $3 já trata inversão; sem Z motorizado |
-| Work Area | Margins | 0 / 0 / 0 / 0 | área toda utilizável |
-| Work Area | Origin Is Coordinate Zero | OFF | sem efeito com margens 0 |
-| Soft Limits | Custom | OFF (usa bounds 150×150) | proteção de jog |
-| Path | Support Arcs | ON | firmware tem G2/G3 |
-| Path | Support Bézier | **ON** | testado: G5 aceito em modo normal e check ($C) |
-| Path | Tolerance | 0,030 | 2,6× menor que o spot — imperceptível |
-| Homing | Home On Start | **OFF + homing manual** | evita crash por objeto esquecido dentro |
-| Homing | Single Axis Homing | ON | GRBL 1.1 suporta |
-| Homing | Clear Alarm On Connect | OFF | desbloqueio consciente |
-| Precision | G-code Precision | 3 | 12× mais fino que o passo da máquina |
-| Dialect | Grbl (Compat) | selecionado | perfil embutido padrão |
-| Device Settings | — | **NÃO TOCAR** | escrita direta no firmware EEPROM |
-| Laser Head | Name / Tool / Type | ACMER Blue Laser 7w / 0 / Diode | — |
-| Laser Head | Max Power | 1000 | $30 |
-| Laser Head | Focus Power | 1,00% | só usado em focus mode (sem Z motorizado = inerte) |
-| Laser Head | Spot Size X/Y | **0,080 / 0,080** | spec oficial ACMER |
-| Framing | Power / Speed / Repeat | 1,00% / 0 / 20 | perfil K1 (1% × 20 ≈ visível sem queimar) |
-| Framing | Pause at Corners | 0 | desligado |
-| 3D Model | head-diode / scale 307,69 | manter | cosmético — só preview 3D |
-| Rotary | — | NÃO configurar | K1 não tem eixo A no firmware |
-| Camera | — | NÃO configurar | K1 não tem câmera |
-| No-go zones | — | pular | opcional, sem risco |
-| Maintenance | — | nada | máquina nova, 0h |
-
-### Procedimento de primeiro uso (seguro)
-
-1. **Homing manual**: abrir a tampa → conferir área vazia → `$H` no console
-   (ou botão Home no Rayforge) → fechar a tampa.
-2. **Teste de jog**: mover +X e +Y alguns mm; coordenadas positivas = direção
-   correta; se invertido, ativar Reverse do eixo afetado.
-3. **Teste de linhas**: gravar linhas nos eixos X e Y (QC — ondulação no Y já
-   foi reportada em unidades defeituosas).
-4. **Material Test Grid** do Rayforge: potência × velocidade em material de
-   sobra antes do primeiro job real.
-5. Começar com potência baixa e conferir com a tampa fechada.
-
----
-
-## Fontes
-
-1. ACMER K1 oficial (loja): https://acmerlaser.com/products/acmer-k1-enclosed-portable-laser-engraver
-2. ACMER EU: https://eu.acmerlaser.com/products/acmer-k1-enclosed-portable-laser-engraver
-3. Downloads ACMER (drivers/firmware K1): https://acmerlaser.com/pages/download
-4. Review Hoffman Engineering (teste 1 mês, 7W): https://www.hoffman.engineering/blog/acmer-k1-review-portable-laser-worth-buying/
-5. 4evatech (specs detalhadas): https://4evatech.com/acmer-k1/
-6. Rayforge oficial: https://rayforge.org/
-7. Rayforge GitHub: https://github.com/barebaric/rayforge
-8. Rayforge Releases: https://github.com/barebaric/rayforge/releases
-9. Rayforge Flathub (Flatpak 1.8): https://flathub.org/apps/org.rayforge.rayforge
-10. Rayforge Snap: https://snapcraft.io/rayforge
-11. Rayforge Installation: https://rayforge.org/docs/getting-started/installation/
-12. Rayforge First Time Setup: https://rayforge.org/docs/getting-started/first-time-setup/
-13. Rayforge Quick Start: https://rayforge.org/docs/getting-started/quick-start/
-14. Rayforge PyPI: https://pypi.org/project/rayforge/
-15. Reviews em vídeo: https://www.youtube.com/watch?v=UfR1fuH7z_c e https://www.youtube.com/watch?v=WyPaQc8XoEE
-
----
-
-## Part 5 — Tabela oficial de parâmetros ACMER (do manual em PDF)
-
-Fonte: `ACMER K1-User Manual（English）.pdf` (seção 7, "Recommended parameters for common materials") — tabela **7W Compressed Spot**, a única aplicável ao módulo 7W do usuário.
-
-### Corte (contour cut) — Power/Speed/Passes
-
-| Material | Power | Speed (mm/min) | Passes |
-|---|---|---|---|
-| Kraft paper 0.5mm | 100% | 1500 | 1 |
-| Kraft paper 1.0mm | 100% | 1000 | 1 |
-| Kraft paper 2.0mm | 100% | 300 | 1 |
-| Plywood 2.0mm | 100% | 200 | 1 |
-| Solid wood 2.0mm | 95% | 200 | 2 |
-| Bamboo 2.0mm | 95% | 150 | 1 |
-| Red/Black Acrylic 1mm | 100% | 150 | 1 |
-| Red/Black Acrylic 2mm | 100% | 80–100 | 1 |
-| Light-colored Felt 1mm | 80% | 1500 | 1 |
-
-### Gravação (raster engrave) — Power/Speed/Passes
-
-| Material | Power | Speed (mm/min) | Passes |
-|---|---|---|---|
-| Kraft paper | 50% | 8000 | 1 |
-| Plywood | 50% | 6000 | 1 |
-| Solid wood | 80% | 3500 | 1 |
-| Bamboo | 80% | 4500 | 1 |
-| Cork | 60% | 5000 | 1 |
-| Leather | 50% | 8000 | 1 |
-| Silica gel | 50% | 2000 | 1 |
-| Glass (blacked) | 100% | 2000 | 1 |
-| Black alumina | 80% | 7000 | 1 |
-
-### Configuração final dos steps da plaquinha (papel 0,5mm, 7W)
+### Configuração dos steps da plaquinha (papel 0,5mm, 7W)
 
 - **Raster Engrave** (texto): Power 50%, Speed 8000, Line Spacing 0,1, Scan Mode Segmented
 - **Contour do texto (DESENHO)**: Power 50%, Speed 8000, Passes 1 — marca o contorno SEM cortar
@@ -643,6 +555,6 @@ Papel fino corta com **power alto + velocidade alta** (menor energia por mm), n�
 ### BUG conhecido Rayforge 1.8.5 — "Job dependencies are not ready" sem erro visível
 
 - **Sintoma**: envio falha com "sending failed: job dependencies are not ready"; Recalculate parece não fazer nada; nenhuma mensagem/ícone de erro na UI.
-- **Causa raiz** (verificado no código `rayforge/pipeline/stage/step_stage.py`): `collect_assembly_info` itera todos os workpieces da camada; se um workpiece não tem fill para o tipo de step (ex.: retângulo só de contorno numa camada com step Raster Engrave), `get_workpiece_handle` retorna `None`. Se a camada tem um workpiece vazio para esse step (ex.: retângulo só de contorno), `collect_assembly_info` lança ValueError → `launch_task` retorna cedo SEM marcar o step como válido → step fica DIRTY para sempre → job nunca pronto.
+- **Causa raiz** (verificado no código `rayforge/pipeline/stage/step_stage.py` v1.8.5): `collect_assembly_info` itera todos os workpieces da camada; se um workpiece não tem fill para o tipo de step (ex.: retângulo só de contorno numa camada com step Raster Engrave), `get_workpiece_handle` retorna `None` → `ValueError` → `except ValueError` retorna `(None, [])` → `launch_task` recebe `assembly_info` vazio, faz `return` sem marcar step como válido → step permanece DIRTY → pipeline nunca conclui.
 - **Workaround**: manter workpieces sem fill em camada separada dos steps de raster. Ex.: Layer 1 = texto (Raster+Contour), Layer 2 = retângulo (Contour de corte).
 - **Extra**: se `rx:511` no status GRBL (buffer cheio), power-cycle na K1.
