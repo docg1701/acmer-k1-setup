@@ -315,6 +315,7 @@ Confira com `iw dev wlan0 get power_save` e `ss -ltn | grep 8000`.
 | "Port in use" ao conectar | outro programa abriu a serial | nada mais pode usar a porta; reinicie o cncjs |
 | Celular não acessa | AP isolation no roteador | desative "isolamento de clientes" no WiFi |
 | Job inicia mas fica lento/com gaps | WiFi 2.4GHz congestionado | prefira 5GHz no mini PC (se suportar) |
+| K1 trava em `<Home>` após jog | homing stall pós-movimento manual | `$X` no console MDI do cncjs ou power-cycle na K1 |
 
 ---
 
