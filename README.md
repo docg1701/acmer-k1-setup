@@ -1,32 +1,36 @@
 # ACMER K1 Setup
 
 Setup validado da gravadora a laser **ACMER K1 7W** com **Rayforge 1.8.5** e
-servidor de impressão dedicado (**Debian + cncjs**) para operar sem USB no PC
-principal.
+servidor de impressão dedicado **printbox** (**Debian 13 + cncjs 1.11.2**).
 
-## A quem serve
+## O que é
 
-Para quem tem uma ACMER K1 (laser diodo azul 7W, 455nm, 150×150mm, GRBL) e quer:
+Este repositório documenta a configuração completa de uma ACMER K1 (laser diodo
+azul 7W, 455 nm, 150×150 mm, GRBL) operada remotamente via servidor de
+impressão. Tudo verificado contra o firmware da máquina (`$$`), o manual oficial
+da ACMER e o código-fonte do Rayforge 1.8.5.
 
-- Configurar o Rayforge corretamente (device, materiais, sanity check)
-- Ter uma **tabela de parâmetros confiável** (potência/velocidade/passes por material)
-- Montar um **servidor de impressão** (mini PC com Debian) para não depender do
-  notebook conectado por USB durante os jobs
+## Servidor printbox
 
-## Pré-requisitos
+Mini PC com Debian 13 console, conectado à K1 por USB e acessível via WiFi na
+rede local.
 
-- ACMER K1 (qualquer potência; a tabela cobre 7W)
-- PC com Linux e Flatpak instalado (Rayforge)
-- Mini PC ou Raspberry Pi para o servidor (Debian netinst)
-- Rede WiFi local
-
-## Documentos
-
-| Arquivo | Para quem | Conteúdo |
+| Serviço | Porta | Função |
 |---|---|---|
-| `docs/MANUAL-RAYFORGE-K1.md` | Quem opera a K1 | Specs da máquina, Rayforge 1.8.5, tabela oficial 7W, bugs, workflow |
-| `docs/MANUAL-SERVIDOR-K1.md` | Quem monta o servidor | Debian + cncjs + systemd, passo a passo do `dd` ao primeiro job |
-| `docs/ACMER-K1-User-Manual-EN.pdf` | Referência | Manual oficial ACMER — fonte primária das tabelas |
+| cncjs 1.11.2 | 8000 | Web UI, upload e stream de G-code |
+| ustreamer 5.4 | 8080 | Stream MJPEG da webcam USB, widget do cncjs |
+| Avahi | — | `printbox.local` |
+
+| Configuração | Valor |
+|---|---|
+| IP fixo | `10.10.10.190/24` |
+| Gateway | `10.10.10.1` |
+| DNS | `8.8.8.8`, `8.8.4.4` |
+| Interface WiFi | `wlp1s0` |
+| Power save | off (serviço systemd) |
+| Serial K1 | `/dev/ttyACM0`, 115200 baud |
+| Usuário | `galvani` (grupos: dialout, tty, sudo, netdev) |
+| SO | Debian 13.6, kernel 6.12 |
 
 ## Stack
 
@@ -35,16 +39,26 @@ Para quem tem uma ACMER K1 (laser diodo azul 7W, 455nm, 150×150mm, GRBL) e quer
  │
  │  WiFi — upload do arquivo
  │
-[Servidor] Debian + cncjs — recebe .nc, streama via USB
+[printbox] Debian 13 + cncjs + ustreamer
+ │  ├── cncjs :8000 — recebe .nc, streama via USB
+ │  └── ustreamer :8080 — webcam
  │
  │  USB serial 115200
  │
 [K1] GRBL — executa
 ```
 
+## Documentos
+
+| Arquivo | Conteúdo |
+|---|---|
+| `docs/MANUAL-RAYFORGE-K1.md` | Specs da máquina, Rayforge 1.8.5, tabela oficial 7W, bugs conhecidos, workflow |
+| `docs/MANUAL-SERVIDOR-K1.md` | Debian 13 + cncjs + systemd + webcam, passo a passo do `dd` ao primeiro job |
+| `docs/ACMER-K1-User-Manual-EN.pdf` | Manual oficial ACMER — fonte primária das tabelas de potência/velocidade |
+
 ## Fluxo rápido
 
-1. Configure o Rayforge (siga `MANUAL-RAYFORGE-K1.md`, Parte 4)
+1. Configure o Rayforge (`MANUAL-RAYFORGE-K1.md`, Parte 4)
 2. Desenhe, configure steps e **Export G-code**
 3. Acesse `http://10.10.10.190:8000` → Upload → Run
 4. Pode desligar o PC — o servidor segue executando
