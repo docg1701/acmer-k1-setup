@@ -11,6 +11,7 @@ Idioma: **pt-BR**. Sem código — apenas manuais, tabelas e configurações.
 - **Máquina**: ACMER K1 7W, GRBL 1.1h fork ACMER, USB serial `/dev/ttyACM0` 115200, sem WiFi
 - **Design**: Rayforge 1.8.5 Flatpak (`org.rayforge.rayforge`), código-fonte em `/var/lib/flatpak/app/org.rayforge.rayforge/`
 - **Servidor**: Debian 13 (console) + cncjs 1.11.2 (Node 20), porta 8000, hostname `printbox`
+- **Webcam**: ustreamer 5.4, porta 8080, stream MJPEG consumido pelo widget do cncjs
 - **Rede**: servidor IP fixo `10.10.10.190/24`, gateway `10.10.10.1`, hostname `printbox` / `printbox.local`
 - **Usuário**: `galvani` (servidor)
 
