@@ -558,4 +558,4 @@ Papel fino corta com **power alto + velocidade alta** (menor energia por mm), n�
 - **Causa raiz** (verificado no código `rayforge/pipeline/stage/step_stage.py` v1.8.5): `collect_assembly_info` itera todos os workpieces da camada; se um workpiece não tem fill para o tipo de step (ex.: retângulo só de contorno numa camada com step Raster Engrave), `get_workpiece_handle` retorna `None` → `ValueError` → `except ValueError` retorna `(None, [])` → `launch_task` recebe `assembly_info` vazio, faz `return` sem marcar step como válido → step permanece DIRTY → pipeline nunca conclui.
 - **Workaround**: manter workpieces sem fill em camada separada dos steps de raster. Ex.: Layer 1 = texto (Raster+Contour), Layer 2 = retângulo (Contour de corte).
 - **Extra**: se `rx:511` no status GRBL (buffer cheio), power-cycle na K1.
-- **Homing stall pós-jog no cncjs**: após mover eixos manualmente, homing pode travar em `<Home>`. Reset: `$X` no console MDI ou power-cycle.
+- **Homing stall pós-jog no cncjs**: após mover eixos manualmente, homing pode travar em `<Home>`. Botão **Unlock** no cncjs, `$X` no console MDI, ou power-cycle.

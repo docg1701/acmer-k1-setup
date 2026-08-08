@@ -34,7 +34,7 @@ Idioma: **pt-BR**. Sem código — apenas manuais, tabelas e configurações.
 - **"Job dependencies are not ready"** (v1.8.5): `step_stage.py` — workpiece sem fill para o step → ValueError → step DIRTY. Workaround: workpieces incompatíveis em camadas separadas.
 - **Sanity check + coordenadas negativas**: geometria local pode ser negativa com canvas "ok". Workaround: centralizar tudo em coords positivas.
 - **Thickness (mm)**: inerte no K1 (sem eixo Z). Só afeta preview 3D.
-- **Homing stall pós-jog no cncjs**: máquina fica presa em `<Home>` após mover eixos manualmente e tentar homing. Reset: `$X` no console MDI ou power-cycle.
+- **Homing stall pós-jog no cncjs**: máquina fica presa em `<Home>` após mover eixos manualmente e tentar homing. Reset: botão **Unlock**, `$X` no console MDI, ou power-cycle.
 
 ## Convenções
 
