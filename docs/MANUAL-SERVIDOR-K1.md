@@ -227,20 +227,7 @@ ss -ltn | grep 8000
 sudo systemctl restart cncjs
 ```
 
-### Opcional — nome fixo via udev
-
-```bash
-# Descubra os IDs da placa:
-udevadm info -a -n /dev/ttyACM0 | grep -E "idVendor|idProduct|serial" | head -6
-
-# Crie a regra (troque os IDs pelos encontrados):
-sudo tee /etc/udev/rules.d/99-k1.rules > /dev/null <<'EOF'
-SUBSYSTEM=="tty", ATTRS{idVendor}=="XXXX", ATTRS{idProduct}=="YYYY", SYMLINK+="ttyK1", MODE="0666"
-EOF
-sudo udevadm control --reload
-```
-
-Com isso o device passa a ser `/dev/ttyK1` — selecione ele no cncjs.
+O device é `/dev/ttyACM0` — use esse nome no cncjs.
 
 ---
 
@@ -249,7 +236,7 @@ Com isso o device passa a ser `/dev/ttyK1` — selecione ele no cncjs.
 1. No browser do seu PC: **`http://10.10.10.190:8000`**
 2. **Connect** (canto superior):
    - **Controller**: `Grbl`
-   - **Serial port**: `/dev/ttyACM0` (ou `/dev/ttyK1` se usou a regra udev)
+   - **Serial port**: `/dev/ttyACM0`
    - **Baud rate**: `115200`
    - **Connect**
 3. Deve aparecer o status GRBL (Idle, posição, versão do firmware).
