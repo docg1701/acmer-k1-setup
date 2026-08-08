@@ -310,10 +310,9 @@ A conexão é automática ao iniciar (status no canto inferior esquerdo).
    Sem design? Use o sketcher ou baixe SVGs gratuitos (Flaticon, SVG Repo).
 2. **Posicionar**: pan (botão do meio ou espaço+arrastar), zoom (scroll),
    mover (arrastar), rotacionar/escalar (alças de seleção).
-3. **Atribuir operação**: selecionar o objeto → `Operations → Add Operation`
-   (`ctrl+shift+a`) → escolher tipo (Contour = cortar; Raster Engrave =
-   gravar; Depth Engrave = profundidade) → configurar **Power** (comece
-   baixo!), **Speed** (mm/min), **Passes**.
+3. **Atribuir operação**: no painel Workflow à direita, clique **Add New Step...**
+   na camada → escolha **Engrave** (gravação) ou **Contour** (corte) →
+   configure **Power** (comece baixo!), **Speed** (mm/min), **Passes**.
 4. **Preview 3D**: `View → 3D Preview` ou `F12` — verifique percursos,
    ordem, objetos errados, excedentes da área de trabalho.
 5. **Enviar para a máquina**:
@@ -541,7 +540,7 @@ Corte = M3 (laser constante), gravação = M4 (potência dinâmica) — automát
 
 ### Configuração dos steps da plaquinha (papel 0,5mm, 7W)
 
-- **Raster Engrave** (texto): Power 50%, Speed 8000, Line Spacing 0,1, Scan Mode Segmented
+- **Engrave** (texto): Power 50%, Speed 8000, Line Spacing 0,1, Scan Mode Segmented
 - **Contour do texto (DESENHO)**: Power 50%, Speed 8000, Passes 1 — marca o contorno SEM cortar
 - **Contour do retângulo (CORTE)**: Power 100%, Speed 1500, Passes 1, Kerf 0,080, Cut Side Centerline
 - Ordem no workflow strip: engrave → contour texto (desenho) → contour retângulo (corte, último)
@@ -555,7 +554,7 @@ Papel fino corta com **power alto + velocidade alta** (menor energia por mm), n�
 ### BUG conhecido Rayforge 1.8.5 — "Job dependencies are not ready" sem erro visível
 
 - **Sintoma**: envio falha com "sending failed: job dependencies are not ready"; Recalculate parece não fazer nada; nenhuma mensagem/ícone de erro na UI.
-- **Causa raiz** (verificado no código `rayforge/pipeline/stage/step_stage.py` v1.8.5): `collect_assembly_info` itera todos os workpieces da camada; se um workpiece não tem fill para o tipo de step (ex.: retângulo só de contorno numa camada com step Raster Engrave), `get_workpiece_handle` retorna `None` → `ValueError` → `except ValueError` retorna `(None, [])` → `launch_task` recebe `assembly_info` vazio, faz `return` sem marcar step como válido → step permanece DIRTY → pipeline nunca conclui.
-- **Workaround**: manter workpieces sem fill em camada separada dos steps de raster. Ex.: Layer 1 = texto (Raster+Contour), Layer 2 = retângulo (Contour de corte).
+- **Causa raiz** (verificado no código `rayforge/pipeline/stage/step_stage.py` v1.8.5): `collect_assembly_info` itera todos os workpieces da camada; se um workpiece não tem fill para o tipo de step (ex.: retângulo só de contorno numa camada com step Engrave), `get_workpiece_handle` retorna `None` → `ValueError` → `except ValueError` retorna `(None, [])` → `launch_task` recebe `assembly_info` vazio, faz `return` sem marcar step como válido → step permanece DIRTY → pipeline nunca conclui.
+- **Workaround**: manter workpieces sem fill em camada separada dos steps de Engrave. Ex.: Layer 1 = texto (Engrave + Contour), Layer 2 = retângulo (Contour de corte).
 - **Extra**: se `rx:511` no status GRBL (buffer cheio), power-cycle na K1.
 - **Homing stall pós-jog no cncjs**: após mover eixos manualmente, homing pode travar em `<Home>`. Botão **Unlock** no cncjs, `$X` no console MDI, ou power-cycle.
