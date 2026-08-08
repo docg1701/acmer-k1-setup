@@ -60,14 +60,14 @@ O power save causa **picos de latência** no WiFi — e é exatamente o que pode
 travar um job no meio (a máquina para com o laser aceso). Desligar:
 
 ```bash
-# Ver a interface (geralmente wlan0)
+# Ver a interface (ip a — geralmente wlp1s0 ou wlan0)
 ip a
 
 # Desligar na hora:
-sudo iw dev wlan0 set power_save off
+sudo iw dev wlp1s0 set power_save off
 
 # Confirmar:
-iw dev wlan0 get power_save
+iw dev wlp1s0 get power_save
 ```
 
 Para persistir após reboot, crie o serviço:
@@ -81,7 +81,7 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/iw dev wlan0 set power_save off
+ExecStart=/usr/sbin/iw dev wlp1s0 set power_save off
 
 [Install]
 WantedBy=multi-user.target
@@ -105,8 +105,8 @@ Substitua o conteúdo por:
 auto lo
 iface lo inet loopback
 
-auto wlan0
-iface wlan0 inet static
+auto wlp1s0
+iface wlp1s0 inet static
     address 10.10.10.190/24
     gateway 10.10.10.1
     wpa-ssid NOME-DA-REDE
@@ -126,7 +126,7 @@ sudo systemctl restart networking
 Confirme:
 
 ```bash
-ip a show wlan0   # deve mostrar 10.10.10.190
+ip a show wlp1s0   # deve mostrar 10.10.10.190
 ping 10.10.10.1   # deve responder
 ```
 
@@ -300,7 +300,7 @@ sudo reboot
 ```
 
 Depois do reboot, o WiFi power save off e o cncjs sobem sozinhos (systemd).
-Confira com `iw dev wlan0 get power_save` e `ss -ltn | grep 8000`.
+Confira com `iw dev wlp1s0 get power_save` e `ss -ltn | grep 8000`.
 
 ---
 
@@ -311,7 +311,7 @@ Confira com `iw dev wlan0 get power_save` e `ss -ltn | grep 8000`.
 | Web UI não abre | cncjs não subiu / IP errado | `ss -ltn \| grep 8000`; `ip a`; reinicie o serviço |
 | "No serial port found" | usuário sem dialout / USB solto | `sudo usermod -aG dialout $USER` + relogin; cheque `ls /dev/ttyACM*` |
 | Porta mudou após religar a K1 | re-enumeração USB | `sudo systemctl restart cncjs` (ou regra udev, seção 4) |
-| Job trava no meio / máquina para com laser aceso | WiFi power save ativo | `iw dev wlan0 get power_save` → deve dar `off` |
+| Job trava no meio / máquina para com laser aceso | WiFi power save ativo | `iw dev wlp1s0 get power_save` → deve dar `off` |
 | "Port in use" ao conectar | outro programa abriu a serial | nada mais pode usar a porta; reinicie o cncjs |
 | Celular não acessa | AP isolation no roteador | desative "isolamento de clientes" no WiFi |
 | Job inicia mas fica lento/com gaps | WiFi 2.4GHz congestionado | prefira 5GHz no mini PC (se suportar) |
@@ -328,6 +328,42 @@ externo, monte uma VPN — não exponha a porta.
 
 ---
 
+## 11. Webcam (opcional)
+
+O cncjs tem um widget de webcam que consome um stream MJPEG externo.
+Use `ustreamer` para expor a webcam USB do servidor.
+
+```bash
+# Instalar
+sudo apt install -y ustreamer
+
+# Serviço systemd
+sudo tee /etc/systemd/system/ustreamer.service > /dev/null <<'EOF'
+[Unit]
+Description=uStreamer MJPEG webcam
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=galvani
+ExecStart=/usr/bin/ustreamer --host=0.0.0.0 --port=8080 --device=/dev/video0 -r 1280x720 -f 15
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now ustreamer.service
+```
+
+No cncjs, ative o **Webcam Widget** e configure a URL:
+`http://10.10.10.190:8080/stream`.
+
+---
+
 ## Resumo da arquitetura (o que roda onde)
 
 | Componente | Onde | Papel |
@@ -335,4 +371,5 @@ externo, monte uma VPN — não exponha a porta.
 | Rayforge | Seu PC | Design, steps, potência, sanity, **export do G-code** |
 | cncjs | mini PC (Debian) | Web UI, recebe o arquivo, **streama via USB** |
 | K1 | — | Executa (GRBL) |
+| ustreamer | mini PC (Debian) | Stream MJPEG da webcam (porta 8080), consumido pelo widget do cncjs |
 | WiFi | entre PC e mini PC | Só o upload do arquivo (o job roda local no servidor) |
