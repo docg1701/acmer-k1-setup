@@ -398,7 +398,8 @@ que lasers abertos equivalentes.
 ## Parte 4 — Configuração verificada do Rayforge para o K1 7W (2026-08-08)
 
 > Configuração feita campo a campo, validando cada valor contra a saída `$$`
-> do firmware da própria máquina (fonte da verdade) e a spec oficial ACMER.
+> do firmware da própria máquina (fonte da verdade) e a spec oficial ACMER
+> (capturada em 2026-08-08).
 
 ### Firmware confirmado via console (`$$`)
 
@@ -439,7 +440,7 @@ que lasers abertos equivalentes.
 | Homing | Single Axis Homing | ON | GRBL 1.1 suporta |
 | Homing | Clear Alarm On Connect | OFF | desbloqueio consciente |
 | Precision | G-code Precision | 3 | 12× mais fino que o passo da máquina |
-| Dialect | Grbl (Compat) (for ACMER K1) | selecionado | perfil oficial embutido |
+| Dialect | Grbl (Compat) | selecionado | perfil embutido padrão |
 | Device Settings | — | **NÃO TOCAR** | escrita direta no firmware EEPROM |
 | Laser Head | Name / Tool / Type | ACMER Blue Laser 7w / 0 / Diode | — |
 | Laser Head | Max Power | 1000 | $30 |
@@ -546,7 +547,7 @@ Corte = M3 (laser constante), gravação = M4 (potência dinâmica) — automát
 | Homing | Single Axis Homing | ON | GRBL 1.1 suporta |
 | Homing | Clear Alarm On Connect | OFF | desbloqueio consciente |
 | Precision | G-code Precision | 3 | 12× mais fino que o passo da máquina |
-| Dialect | Grbl (Compat) (for ACMER K1) | selecionado | perfil oficial embutido |
+| Dialect | Grbl (Compat) | selecionado | perfil embutido padrão |
 | Device Settings | — | **NÃO TOCAR** | escrita direta no firmware EEPROM |
 | Laser Head | Name / Tool / Type | ACMER Blue Laser 7w / 0 / Diode | — |
 | Laser Head | Max Power | 1000 | $30 |
@@ -642,6 +643,6 @@ Papel fino corta com **power alto + velocidade alta** (menor energia por mm), n�
 ### BUG conhecido Rayforge 1.8.5 — "Job dependencies are not ready" sem erro visível
 
 - **Sintoma**: envio falha com "sending failed: job dependencies are not ready"; Recalculate parece não fazer nada; nenhuma mensagem/ícone de erro na UI.
-- **Causa raiz** (verificado no código `rayforge/pipeline/stage/step_stage.py`): step Raster Engrave pula workpieces sem fill ("steps skip workpieces with no fills"). Se a camada tem um workpiece vazio para esse step (ex.: retângulo só de contorno), `collect_assembly_info` lança ValueError → `launch_task` retorna cedo SEM marcar o step como válido → step fica DIRTY para sempre → job nunca pronto.
+- **Causa raiz** (verificado no código `rayforge/pipeline/stage/step_stage.py`): `collect_assembly_info` itera todos os workpieces da camada; se um workpiece não tem fill para o tipo de step (ex.: retângulo só de contorno numa camada com step Raster Engrave), `get_workpiece_handle` retorna `None`. Se a camada tem um workpiece vazio para esse step (ex.: retângulo só de contorno), `collect_assembly_info` lança ValueError → `launch_task` retorna cedo SEM marcar o step como válido → step fica DIRTY para sempre → job nunca pronto.
 - **Workaround**: manter workpieces sem fill em camada separada dos steps de raster. Ex.: Layer 1 = texto (Raster+Contour), Layer 2 = retângulo (Contour de corte).
 - **Extra**: se `rx:511` no status GRBL (buffer cheio), power-cycle na K1.

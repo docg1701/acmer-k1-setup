@@ -1,59 +1,61 @@
 # AGENTS.md
 
-## Purpose
+## Contexto do projeto
 
-Documentação validada do setup da gravadora **ACMER K1** (laser diodo azul 7W,
-455nm, área 150×150, firmware GRBL) com **Rayforge 1.8.5** e servidor de
-impressão **Debian + cncjs**. Este repositório **não contém código** — apenas
-manuais e configurações. Idioma dos documentos: **pt-BR**.
+Repositório de documentação do setup da gravadora **ACMER K1 7W** com
+**Rayforge 1.8.5** (Flatpak) e servidor de impressão **Debian + cncjs**.
+Idioma: **pt-BR**. Sem código — apenas manuais, tabelas e configurações.
 
-## Project facts (não re-verificar sem motivo)
+## Stack (fatos — não questionar)
 
-- Máquina: ACMER K1 7W — GRBL, USB serial 115200 (`/dev/ttyACM0`), **sem WiFi de fábrica**
-- Software de design: Rayforge 1.8.5 via Flatpak (`org.rayforge.rayforge`) — código-fonte local: `/tmp/rayforge-1.8.5/`
-- Servidor: Debian netinst (console puro) + **cncjs 1.11.x** (Node), web UI porta 8000
-- Tabela oficial de potência/velocidade: manual ACMER, seção "7W Compressed Spot" (PDF em `docs/`)
+- **Máquina**: ACMER K1 7W, GRBL 1.1h fork ACMER, USB serial `/dev/ttyACM0` 115200, sem WiFi
+- **Design**: Rayforge 1.8.5 Flatpak (`org.rayforge.rayforge`), código-fonte em `/var/lib/flatpak/app/org.rayforge.rayforge/`
+- **Servidor**: Debian netinst (console) + cncjs 1.11.x (Node), porta 8000
+- **Rede**: servidor IP fixo `10.10.10.190/24`, gateway `10.10.10.1`
+- **Usuário**: `galvani` (servidor e máquina local)
 
-## Source of truth (nesta ordem)
+## Source of truth
 
-1. **Manual oficial ACMER** (`docs/ACMER-K1-User-Manual-EN.pdf`) — potência/velocidade/passes
-2. **Firmware da máquina (`$$`)** — parâmetros de hardware (nunca alterar `$x=`)
-3. **Código-fonte do Rayforge 1.8.5** — comportamento do software/UI
-4. Documentos deste repo (que consolidam 1–3)
+1. `docs/ACMER-K1-User-Manual-EN.pdf` — tabelas de potência/velocidade
+2. Firmware da máquina (`$$`) — parâmetros de hardware
+3. Código-fonte do Rayforge 1.8.5 (Flatpak) — comportamento do software
+4. Documentos deste repo (consolidam 1–3)
 
 ## Regras absolutas
 
-- **NUNCA alterar valores de firmware `$x=`** — fábrica está correto; Rayforge apenas lê
-- **NUNCA inventar potência/velocidade** — usar a tabela oficial 7W (MANUAL-RAYFORGE-K1.md, Parte 5)
-- **NUNCA afirmar comportamento do Rayforge sem conferir o código-fonte** — versões mudam; citar a versão em toda afirmação
-- **NUNCA sugerir "passar por cima" do sanity check** — coordenadas negativas = risco de crash da máquina ($21=1)
+- `$x=` do firmware **nunca se altera**. Fábrica está correto.
+- Potência/velocidade **sempre** da tabela 7W (`MANUAL-RAYFORGE-K1.md`, Parte 5).
+- Afirmações sobre Rayforge **só com código-fonte**. Citar versão em toda afirmação.
+- **Nunca** sugerir bypass do sanity check — coordenadas negativas crasham a máquina ($21=1).
+- **Nunca** propor troca de hardware (WiFi module, board swap) como solução primária.
 
-## Bugs conhecidos do Rayforge 1.8.5 (documentados — não re-diagnosticar)
+## Bugs conhecidos (não re-diagnosticar)
 
-- **"Job dependencies are not ready"**: `step_stage.py` — workpiece "vazio" para um step trava o pipeline silenciosamente. Workaround: workpieces distintas em camadas separadas
-- **Sanity check com coordenadas negativas**: geometria local do sketch pode ser negativa mesmo com canvas "ok". Workaround: centralizar/posicionar tudo em coords positivas
-- **Campo thickness (mm)**: inert no K1 (sem eixo Z) — só afeta preview 3D
+- **"Job dependencies are not ready"** (v1.8.5): `step_stage.py` — workpiece sem fill para o step → ValueError → step DIRTY. Workaround: workpieces incompatíveis em camadas separadas.
+- **Sanity check + coordenadas negativas**: geometria local pode ser negativa com canvas "ok". Workaround: centralizar tudo em coords positivas.
+- **Thickness (mm)**: inerte no K1 (sem eixo Z). Só afeta preview 3D.
 
-## Convenções de edição
+## Convenções
 
-- DRY: tabela oficial de materiais vive em **um** lugar (MANUAL-RAYFORGE-K1.md, Parte 5) — atualizar lá
-- Manter tabelas Markdown simples (pipe tables), sem HTML
-- PDF oficial: nome ASCII (`ACMER-K1-User-Manual-EN.pdf`)
-- Nomes de materiais no Rayforge: Papel = kraft; Papelão = corrugado
+- Tabela de materiais: fonte única em `MANUAL-RAYFORGE-K1.md`, Parte 5
+- Markdown: pipe tables, sem HTML
+- PDF: `ACMER-K1-User-Manual-EN.pdf` (ASCII)
+- Nomes Rayforge: Papel = kraft, Papelão = corrugado
 
 ## Comandos
 
 ```bash
-# Extrair texto do manual oficial (para busca)
+# Extrair texto do manual
 pdftotext -layout docs/ACMER-K1-User-Manual-EN.pdf /tmp/k1_manual.txt
 
-# Verificar versão do cncjs no servidor
+# Versão do cncjs no servidor
 cnc -V
-```
 
-Sem build/test/run — repositório de documentação.
+# Código-fonte do Rayforge
+find /var/lib/flatpak/app/org.rayforge.rayforge -name "*.py" -path "*/rayforge/*"
+```
 
 ## Limites
 
-- Não propor mudanças de hardware (WiFi module, board swap) como solução primária — o K1 é GRBL/USB e o setup cncjs já resolve
-- Não recomendar ferramentas de controle laser sem verificar manutenção/releases atuais (ex.: LaserWeb4 está estagnado desde 2018 — não usar)
+- Sem build/test/run — repo de documentação
+- Não recomendar software de controle laser sem verificar manutenção recente (LaserWeb4: estagnado desde 2018)

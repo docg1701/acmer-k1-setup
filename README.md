@@ -1,34 +1,61 @@
 # ACMER K1 Setup
 
-Configuração validada da gravadora ACMER K1 (laser diodo azul 7W, 455nm, área 150×150) com Rayforge 1.8.5, e servidor de impressão dedicado (Debian + cncjs) para operar sem cabo USB no PC principal.
+Setup validado da gravadora a laser **ACMER K1 7W** com **Rayforge 1.8.5** e
+servidor de impressão dedicado (**Debian + cncjs**) para operar sem USB no PC
+principal.
 
-**Tudo aqui foi verificado contra o firmware da máquina (`$$`), o manual oficial da ACMER e o código-fonte do Rayforge 1.8.5.** Nada é chute.
+## A quem serve
+
+Para quem tem uma ACMER K1 (laser diodo azul 7W, 455nm, 150×150mm, GRBL) e quer:
+
+- Configurar o Rayforge corretamente (device, materiais, sanity check)
+- Ter uma **tabela de parâmetros confiável** (potência/velocidade/passes por material)
+- Montar um **servidor de impressão** (mini PC com Debian) para não depender do
+  notebook conectado por USB durante os jobs
+
+## Pré-requisitos
+
+- ACMER K1 (qualquer potência; a tabela cobre 7W)
+- PC com Linux e Flatpak instalado (Rayforge)
+- Mini PC ou Raspberry Pi para o servidor (Debian netinst)
+- Rede WiFi local
 
 ## Documentos
 
-| Arquivo | Conteúdo |
-|---|---|
-| `docs/MANUAL-RAYFORGE-K1.md` | Configuração completa do Rayforge para a K1: device settings, materiais, tabela oficial 7W (corte/gravação), workflow de plaquinha, bugs conhecidos da 1.8.5 |
-| `docs/MANUAL-SERVIDOR-K1.md` | Servidor de impressão: Debian + WiFi + cncjs + USB, fluxo "desenha no PC → servidor executa → PC desliga" |
-| `docs/ACMER-K1-User-Manual-EN.pdf` | Manual oficial da ACMER (fonte primária das tabelas de potência/velocidade) |
+| Arquivo | Para quem | Conteúdo |
+|---|---|---|
+| `docs/MANUAL-RAYFORGE-K1.md` | Quem opera a K1 | Specs da máquina, Rayforge 1.8.5, tabela oficial 7W, bugs, workflow |
+| `docs/MANUAL-SERVIDOR-K1.md` | Quem monta o servidor | Debian + cncjs + systemd, passo a passo do `dd` ao primeiro job |
+| `docs/ACMER-K1-User-Manual-EN.pdf` | Referência | Manual oficial ACMER — fonte primária das tabelas |
 
 ## Stack
 
-- **Máquina**: ACMER K1 7W — GRBL, USB serial 115200 (`/dev/ttyACM0`), sem WiFi de fábrica
-- **Design/CAM**: Rayforge 1.8.5 (Flatpak `org.rayforge.rayforge`) — steps, potência, sanity check, export G-code
-- **Servidor de impressão**: Debian (netinst, console) + cncjs 1.11.x — web UI, streama o job pelo USB local, PC pode desligar
-- **Rede**: WiFi entre PC e servidor usada apenas para o upload do arquivo
+```
+[PC] Rayforge (Flatpak) — desenho, steps, export G-code
+ │
+ │  WiFi — upload do arquivo
+ │
+[Servidor] Debian + cncjs — recebe .nc, streama via USB
+ │
+ │  USB serial 115200
+ │
+[K1] GRBL — executa
+```
 
 ## Fluxo rápido
 
-1. Desenhe e configure no Rayforge (potência/velocidade = tabela oficial 7W)
-2. `File → Export G-code...`
-3. Upload no cncjs (`http://<servidor>:8000`) → Run
-4. Desligue o PC — o servidor executa e você acompanha pelo browser
+1. Configure o Rayforge (siga `MANUAL-RAYFORGE-K1.md`, Parte 4)
+2. Desenhe, configure steps e **Export G-code**
+3. Acesse `http://10.10.10.190:8000` → Upload → Run
+4. Pode desligar o PC — o servidor segue executando
 
-## Regras que não devem ser quebradas
+## Regras imutáveis
 
-- **Nunca alterar valores de firmware `$x=`** — os de fábrica estão corretos
-- **Nunca inventar potência/velocidade** — usar a tabela oficial 7W (Parte 5 do manual)
-- **Geometria sempre em coordenadas positivas** no projeto (sanity check da 1.8.5 falha com valores negativos)
-- Ver `AGENTS.md` para o contexto completo de trabalho neste repositório.
+- Firmware da K1 (`$x=`) **não se altera** — valores de fábrica são corretos
+- Potência/velocidade **sempre da tabela oficial 7W** (manual Parte 5)
+- Coordenadas de projeto **sempre positivas** (sanity check do Rayforge)
+- Para contribuir neste repo, leia `AGENTS.md` antes
+
+## Licença
+
+Documentação — uso livre. PDF oficial ACMER: copyright ACMER.

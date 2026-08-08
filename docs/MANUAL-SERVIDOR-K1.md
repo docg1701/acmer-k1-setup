@@ -92,16 +92,52 @@ sudo systemctl enable --now wifi-powersave-off.service
 
 ### 2.2. IP fixo
 
-Reserve o IP no **roteador** (DHCP reservation) pelo MAC do mini PC
-(`ip link` → MAC do wlan0). Ex.: `192.168.1.200`. Anote esse IP — é ele que
-você vai digitar no browser para sempre.
+Configurar direto no Debian (sem depender de DHCP reservation do roteador).
+Edite `/etc/network/interfaces`:
+
+```bash
+sudo nano /etc/network/interfaces
+```
+
+Substitua o conteúdo por:
+
+```
+auto lo
+iface lo inet loopback
+
+auto wlan0
+iface wlan0 inet static
+    address 10.10.10.190/24
+    gateway 10.10.10.1
+    wpa-ssid NOME-DA-REDE
+    wpa-psk SENHA-DA-REDE
+```
+
+> Substitua `NOME-DA-REDE` e `SENHA-DA-REDE` pelos dados do seu WiFi.
+> Se o WiFi tiver caracteres especiais na senha, use aspas: `wpa-psk "senha"`.
+
+Aplicar:
+
+```bash
+sudo systemctl restart networking
+# ou reboot
+```
+
+Confirme:
+
+```bash
+ip a show wlan0   # deve mostrar 10.10.10.190
+ping 10.10.10.1   # deve responder
+```
+
+Anote `10.10.10.190` — esse IP vai no browser para sempre.
 
 ### 2.3. Teste do SSH (opcional, mas recomendado)
 
 O mini PC não tem monitor — gerencie por SSH do seu PC:
 
 ```bash
-ssh galvani@<ip-do-minipc>
+ssh galvani@10.10.10.190
 ```
 
 ---
@@ -202,7 +238,7 @@ Com isso o device passa a ser `/dev/ttyK1` — selecione ele no cncjs.
 
 ## 5. Configuração do cncjs (web UI)
 
-1. No browser do seu PC: **`http://<ip-do-minipc>:8000`**
+1. No browser do seu PC: **`http://10.10.10.190:8000`**
 2. **Connect** (canto superior): 
    - **Controller**: `Grbl`
    - **Serial port**: `/dev/ttyACM0` (ou `/dev/ttyK1` se usou a regra udev)
@@ -229,7 +265,7 @@ Com isso o device passa a ser `/dev/ttyK1` — selecione ele no cncjs.
 **Forma 1 — browser**: cncjs → aba G-code → **Upload** → seleciona `plaquinha.nc`
 
 **Forma 2 — pasta monitorada**: copie o arquivo para `~/gcode` no mini PC
-(`scp plaquinha.nc galvani@<ip>:/home/galvani/gcode/`) — ele aparece na web UI
+(`scp plaquinha.nc galvani@10.10.10.190:/home/galvani/gcode/`) — ele aparece na web UI
 sozinho.
 
 ### 6.3. Executar
@@ -238,7 +274,7 @@ sozinho.
 2. Confira o visualizador (toolpath) e a posição da máquina
 3. **Run** → o servidor streama o job pelo USB
 4. **Desliga o PC** — o job continua; acompanhe do celular no
-   `http://<ip-do-minipc>:8000`
+   `http://10.10.10.190:8000`
 5. Botões disponíveis durante o job: **Pause**, **Resume**, **Cancel**
 
 ---
