@@ -1,10 +1,6 @@
 # ACMER K1 7W — Documentation
 
-> Documentation repository for the **ACMER K1 7W** laser engraver.
-> Hardware specs, firmware parameters, material table, and a complete
-> guide to running ACMER Studio on Linux + cncjs print server.
-
----
+Documentation repository for the ACMER K1 7W laser engraver: hardware specs, firmware parameters, material table, and a complete guide to running ACMER Studio on Linux + cncjs print server.
 
 ## Screenshots
 
@@ -17,19 +13,14 @@
 ![cncjs web interface](assets/cncjs.jpg)
 *cncjs web interface — job running with live toolpath*
 
----
-
 ## What This Repo Covers
 
-This is a complete, tested guide for using the **ACMER K1 7W** blue-diode
-laser engraver on Linux. It covers:
+This is a complete, tested guide for using the ACMER K1 7W blue-diode laser engraver on Linux. It covers:
 
 - Hardware specifications and factory firmware parameters (`$$`)
 - Material cutting/engraving settings (from the official 7W table)
-- Setting up a **print server** (Debian + cncjs + webcam) for headless operation
-- Running **ACMER Studio on Linux** via Bottles + GE-Proton (no Windows needed)
-
----
+- Setting up a print server (Debian + cncjs + webcam) for headless operation
+- Running ACMER Studio on Linux via Bottles + GE-Proton (no Windows needed)
 
 ## Documents
 
@@ -40,28 +31,19 @@ laser engraver on Linux. It covers:
 | [ACMER-STUDIO-BOTTLES-MANUAL.md](docs/ACMER-STUDIO-BOTTLES-MANUAL.md) | ACMER Studio on Linux (Bottles + GE-Proton) |
 | [ACMER-K1-User-Manual-EN.pdf](docs/ACMER-K1-User-Manual-EN.pdf) | Official ACMER manual (primary source) |
 
----
-
 ## Quick Start
 
-### 1. Use ACMER Studio on Linux
+**1. Use ACMER Studio on Linux**
 
-→ Follow [ACMER-STUDIO-BOTTLES-MANUAL.md](docs/ACMER-STUDIO-BOTTLES-MANUAL.md)
-to install Bottles, set up the GE-Proton11-3 runner, fix keyboard dialogs,
-and get the tool DLLs loading.
+Follow [ACMER-STUDIO-BOTTLES-MANUAL.md](docs/ACMER-STUDIO-BOTTLES-MANUAL.md) to install Bottles, set up the GE-Proton11-3 runner, fix keyboard dialogs, and get the tool DLLs loading.
 
-### 2. Set Up the Print Server
+**2. Set Up the Print Server**
 
-→ Follow [K1-SERVER-MANUAL.md](docs/K1-SERVER-MANUAL.md) to install Debian
-on a mini PC, configure cncjs, set a static IP, and stream jobs via USB.
+Follow [K1-SERVER-MANUAL.md](docs/K1-SERVER-MANUAL.md) to install Debian on a mini PC, configure cncjs, set a static IP, and stream jobs via USB.
 
-### 3. Material Settings
+**3. Material Settings**
 
-→ Check [SPECIFICATIONS-K1.md](docs/SPECIFICATIONS-K1.md) for the official
-7W power/speed table, plus community-tested values for PLA, ABS, PETG,
-and corrugated cardboard.
-
----
+Check [SPECIFICATIONS-K1.md](docs/SPECIFICATIONS-K1.md) for the official 7W power/speed table, plus community-tested values for PLA, ABS, PETG, and corrugated cardboard.
 
 ## Architecture Overview
 
@@ -76,19 +58,13 @@ and corrugated cardboard.
 [K1]  GRBL — executes the job
 ```
 
-The server runs headless. Upload a G-code file, start the job, and turn
-off your PC — the server handles everything. Monitor from any browser
-(PC or phone).
-
----
+The server runs headless. Upload a G-code file, start the job, and turn off your PC — the server handles everything. Monitor from any browser (PC or phone).
 
 ## Immutable Rules
 
 - K1 firmware (`$x=`) **must not be changed** — factory values are correct
 - Power/speed **always from the official 7W table** (ACMER manual)
 - **Never** propose hardware swaps (WiFi module, board swap) as a primary solution
-
----
 
 ## License
 
