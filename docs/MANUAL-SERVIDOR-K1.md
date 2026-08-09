@@ -1,14 +1,14 @@
-# MANUAL — Servidor de Impressão da K1 (Rayforge + cncjs)
+# MANUAL — Servidor de Impressão da K1 (Wine + cncjs)
 
-> **Arquitetura**: você desenha e gera o job no Rayforge (seu PC), envia o arquivo
-> G-code para o cncjs rodando no mini PC (servidor), e o servidor executa a K1
-> direto pelo USB. Seu PC pode desligar — o servidor cuida de tudo, e você
-> acompanha pelo browser (PC ou celular).
+> **Arquitetura**: você desenha e gera o job no LaserGRBL ou ACMER Studio (seu PC,
+> via Wine), envia o arquivo G-code para o cncjs rodando no mini PC (servidor),
+> e o servidor executa a K1 direto pelo USB. Seu PC pode desligar — o servidor
+> cuida de tudo, e você acompanha pelo browser (PC ou celular).
 >
 > **Data**: 2026-08-08 · **cncjs v1.11.x** (verificado: releases ativos em 2026)
 
 ```text
-[Seu PC]  Rayforge — desenha, configura steps, exporta G-code
+[Seu PC]  Wine + LaserGRBL ou ACMER Studio — design, potência, export G-code
     │
     │  WiFi (rede local) — só upload do arquivo
     ▼
@@ -18,8 +18,8 @@
 [K1]  GRBL — executa o job
 ```
 
-**Regra de ouro**: toda configuração (potência, velocidade, passes, ordem dos
-steps, sanity check) acontece no Rayforge, na hora do **Export G-code**. O cncjs
+**Regra de ouro**: toda configuração (potência, velocidade, passes, ordem) acontece
+no software de design (LaserGRBL ou ACMER Studio), na hora de gerar o G-code. O cncjs
 não tem configuração de material/potência — ele só manda o arquivo para a
 máquina, byte por byte. Nada se repete no servidor.
 
@@ -169,7 +169,7 @@ EOF
 ```
 
 - `controller: Grbl` — a K1 é GRBL
-- `baudrates: 115200` — baud da K1 (confirmado na config atual do Rayforge)
+- `baudrates: 115200` — baud da K1
 - `watchDirectory` — pasta monitorada: arquivos jogados ali aparecem na web UI
 - O cncjs adiciona automaticamente `state` e `secret` ao salvar preferências pela web UI
 
@@ -248,12 +248,11 @@ O device é `/dev/ttyACM0` — use esse nome no cncjs.
 
 ## 6. Fluxo do dia a dia
 
-### 6.1. No Rayforge (seu PC) — gerar o job
+### 6.1. No LaserGRBL / ACMER Studio (seu PC, via Wine) — gerar o job
 
-1. Desenha e configura tudo como você já faz (steps, potência, sanity check)
-2. **`File → Export G-code...`** → salve ex.: `plaquinha.nc`
-   - O sanity check roda na exportação — coordenadas negativas aparecem aqui
-   - O arquivo contém TUDO: potência, velocidade, passes, ordem dos steps
+1. Desenha e configura tudo (potência, velocidade, passes)
+2. **Exporte o G-code** → salve ex.: `plaquinha.nc`
+   - O arquivo contém TUDO: potência, velocidade, passes, ordem
 
 ### 6.2. Enviar para o servidor
 
@@ -281,7 +280,7 @@ sozinho.
 3. **Teste de "PC desligado"**: inicie um job, desligue o notebook, confirme
    que o job termina e o servidor mostra 100%
 4. **Teste de pause/cancel**: pause no meio, resume, depois cancel — a K1
-   responde como no Rayforge
+   deve responder corretamente
 
 ---
 
@@ -368,7 +367,7 @@ No cncjs, ative o **Webcam Widget** e configure a URL:
 
 | Componente | Onde | Papel |
 |---|---|---|
-| Rayforge | Seu PC | Design, steps, potência, sanity, **export do G-code** |
+| LaserGRBL / ACMER Studio | Seu PC (Wine) | Design, potência, **export do G-code** |
 | cncjs | mini PC (Debian) | Web UI, recebe o arquivo, **streama via USB** |
 | K1 | — | Executa (GRBL) |
 | ustreamer | mini PC (Debian) | Stream MJPEG da webcam (porta 8080), consumido pelo widget do cncjs |

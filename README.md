@@ -1,14 +1,14 @@
 # ACMER K1 Setup
 
-Setup validado da gravadora a laser **ACMER K1 7W** com **Rayforge 1.8.5** e
-servidor de impressão dedicado **printbox** (**Debian 13 + cncjs 1.11.2**).
+Setup da gravadora a laser **ACMER K1 7W** com **Wine + LaserGRBL / ACMER Studio**
+e servidor de impressão dedicado **printbox** (**Debian 13 + cncjs 1.11.2**).
 
 ## O que é
 
 Este repositório documenta a configuração completa de uma ACMER K1 (laser diodo
 azul 7W, 455 nm, 150×150 mm, GRBL) operada remotamente via servidor de
-impressão. Tudo verificado contra o firmware da máquina (`$$`), o manual oficial
-da ACMER e o código-fonte do Rayforge 1.8.5.
+impressão. Tudo verificado contra o firmware da máquina (`$$`) e o manual oficial
+da ACMER.
 
 ## Servidor printbox
 
@@ -35,7 +35,7 @@ rede local.
 ## Stack
 
 ```text
-[PC] Rayforge (Flatpak) — desenho, steps, export G-code
+[Seu PC - Linux Mint]  Wine + LaserGRBL ou ACMER Studio — design e export G-code
  │
  │  WiFi — upload do arquivo
  │
@@ -52,22 +52,22 @@ rede local.
 
 | Arquivo | Conteúdo |
 |---|---|
-| `docs/MANUAL-RAYFORGE-K1.md` | Specs da máquina, Rayforge 1.8.5, tabela oficial 7W, bugs conhecidos, workflow |
-| `docs/MANUAL-SERVIDOR-K1.md` | Debian 13 + cncjs + systemd + webcam, passo a passo do `dd` ao primeiro job |
+| `docs/WINE-ACMER-STUDIO-K1.md` | Instalação do ACMER Studio V1.4.0 no Wine (testado e funcional) |
+| `docs/BOTTLES-ACMER-STUDIO-K1.md` | Instalação do ACMER Studio V1.4.0 via Bottles (snapshot e backup) |
+| `docs/WINE-SETUP-K1.md` | Instalação do LaserGRBL no Wine (alternativa) |
+| `docs/MANUAL-SERVIDOR-K1.md` | Debian 13 + cncjs + systemd + webcam, passo a passo |
 | `docs/ACMER-K1-User-Manual-EN.pdf` | Manual oficial ACMER — fonte primária das tabelas de potência/velocidade |
 
 ## Fluxo rápido
 
-1. Configure o Rayforge (`MANUAL-RAYFORGE-K1.md`, Parte 4)
-2. Desenhe, configure steps e **Export G-code**
-3. Acesse `http://10.10.10.190:8000` → Upload → Run
-4. Pode desligar o PC — o servidor segue executando
+1. Gere o G-code no ACMER Studio (Wine): `docs/WINE-ACMER-STUDIO-K1.md`
+2. Acesse `http://10.10.10.190:8000` → Upload → Run
+3. Pode desligar o PC — o servidor segue executando
 
 ## Regras imutáveis
 
 - Firmware da K1 (`$x=`) **não se altera** — valores de fábrica são corretos
-- Potência/velocidade **sempre da tabela oficial 7W** (manual Parte 5)
-- Coordenadas de projeto **sempre positivas** (sanity check do Rayforge)
+- Potência/velocidade **sempre da tabela oficial 7W** (manual ACMER)
 - Para contribuir neste repo, leia `AGENTS.md` antes
 
 ## Licença
