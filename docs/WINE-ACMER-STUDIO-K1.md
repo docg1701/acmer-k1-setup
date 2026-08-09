@@ -92,7 +92,18 @@ Aba **Graphics** → desmarque **todas** as opções em "Window settings":
 
 ---
 
-## 6. Abrir o programa
+## 6. Mapear diretório home
+
+Abra o `winecfg`, aba **Drives** → **Add**.
+
+- Letra: `D:`
+- Pasta: `/home/galvani`
+
+Agora o ACMER Studio acessa teus arquivos em `D:\`.
+
+---
+
+## 7. Abrir o programa
 
 ```bash
 wine "C:\Program Files\ACMER Studio\ACMER Studio.exe"
@@ -110,7 +121,7 @@ wine "C:\Program Files\ACMER Studio\ACMER Studio.exe"
 
 ---
 
-## 7. Conexão com a K1 (opcional)
+## 8. Conexão com a K1 (opcional)
 
 Se a K1 estiver conectada via USB neste PC:
 
@@ -125,7 +136,7 @@ upload via `http://10.10.10.190:8000`.
 
 ---
 
-## 8. Limitações conhecidas
+## 9. Limitações conhecidas
 
 - **Calibração de câmera**: não funciona (irrelevante, K1 não tem câmera)
 - **Smart autofill / IA**: não testado (depende de onnxruntime)
