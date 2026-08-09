@@ -35,11 +35,11 @@ winetricks --force vcrun2019
 cd ~/.cache/winetricks/vcrun2019
 wine vc_redist.x64.exe /quiet /norestart
 
-winetricks --force allfonts
+winetricks --force corefonts
 ```
 
 `vc_redist.x64.exe` falha com status 102 via winetricks — instalação manual.
-`allfonts`: ~250 MB, corrige texto serrilhado.
+`corefonts`: ~5 MB (Arial, Times, Courier). Se texto serrilhado, `allfonts` depois.
 
 ---
 
