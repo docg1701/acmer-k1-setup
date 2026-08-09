@@ -2,6 +2,20 @@
 
 Documentation repository for the ACMER K1 7W laser engraver: hardware specs, firmware parameters, material table, and a complete guide to running ACMER Studio on Linux + cncjs print server.
 
+## Why This Setup
+
+A laser engraver is a hazardous machine: it produces toxic fumes, poses a fire risk, and the laser beam itself is a danger to eyesight. Running it on the same desk where you do your design work is a bad idea.
+
+This repo documents how to:
+
+- Keep the **laser in a separate, ventilated area** (garage, workshop, enclosed space)
+- Run a **dedicated print server** next to the machine (mini PC + cncjs)
+- Do all your **design work on your main PC** (ACMER Studio via Bottles on Linux)
+- **Send jobs over the network** — no need to be near the machine while it runs
+- **Monitor remotely** from any browser (PC or phone)
+
+The result: the laser stays in a safe environment, and you control it from your desk without health risks.
+
 ## Screenshots
 
 ![ACMER Studio running via Bottles](assets/acmer-studio.jpg)
@@ -12,15 +26,6 @@ Documentation repository for the ACMER K1 7W laser engraver: hardware specs, fir
 
 ![cncjs web interface](assets/cncjs.jpg)
 *cncjs web interface — job running with live toolpath*
-
-## What This Repo Covers
-
-This is a complete, tested guide for using the ACMER K1 7W blue-diode laser engraver on Linux. It covers:
-
-- Hardware specifications and factory firmware parameters (`$$`)
-- Material cutting/engraving settings (from the official 7W table)
-- Setting up a print server (Debian + cncjs + webcam) for headless operation
-- Running ACMER Studio on Linux via Bottles + GE-Proton (no Windows needed)
 
 ## Quick Start
 
@@ -39,21 +44,21 @@ Check [SPECIFICATIONS-K1.md](docs/SPECIFICATIONS-K1.md) for the official 7W powe
 ## Architecture Overview
 
 ```
-[Linux PC]  Wine/Bottles + ACMER Studio — design, power, export G-code
+[Your PC]       ACMER Studio on Linux — design, power settings, export G-code
      │
      │  WiFi (local network) — file upload only
      ▼
-[Server]  Debian + cncjs — receives file, streams via USB
+[Print Server]  Debian + cncjs — receives file, streams via USB
      │  USB serial 115200
      ▼
-[K1]  GRBL — executes the job
+[K1 Laser]      GRBL — executes the job (in a separate, ventilated area)
 ```
 
-The server runs headless. Upload a G-code file, start the job, and turn off your PC — the server handles everything. Monitor from any browser (PC or phone).
+You design at your desk, upload the job, and walk away. The server runs the machine headless. Monitor the job from your phone or any browser — you never need to be in the same room as the laser.
 
 ## Webcam
 
-The print server supports a live webcam feed via **ustreamer** (MJPEG stream on port 8080). The cncjs web interface has a webcam widget that consumes this stream.
+The print server supports a live webcam feed via **ustreamer** (MJPEG stream on port 8080). The cncjs web interface has a webcam widget that consumes this stream — so you can watch the machine running from anywhere on your network.
 
 Setup is covered in the [K1-SERVER-MANUAL.md](docs/K1-SERVER-MANUAL.md) section 11.
 
