@@ -2,25 +2,9 @@
 
 > **Data**: 2026-08-08
 > **Sistema**: Linux Mint 22.3 Cinnamon (x86_64)
-> **Wine**: wine-9.0 (Ubuntu 9.0~repack-4build3)
-> **Winetricks**: 20240105
+> **Wine**: wine-9.0
 > **ACMER Studio**: V1.4.0 (15/07/2026)
 > **Resultado**: funcional — design, G-code, interface completa
-
----
-
-## 0. Instalar Wine do sistema
-
-```bash
-sudo dpkg --add-architecture i386
-sudo mkdir -pm755 /etc/apt/keyrings
-sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-sudo wget -nc -P /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
-sudo apt update
-sudo apt install --install-recommends winehq-staging winetricks
-```
-
-Verifique: `wine --version` → `wine-9.0`
 
 ---
 
