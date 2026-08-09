@@ -1,24 +1,32 @@
-# ACMER K1 7W — Documentação
+# ACMER K1 7W — Documentation
 
-Repositório de documentação da gravadora **ACMER K1 7W**: especificações de
-hardware, parâmetros de firmware (`$$`), tabela de materiais e configuração do
-servidor de impressão **printbox**.
+Documentation repository for the **ACMER K1 7W** laser engraver: hardware
+specifications, firmware parameters (`$$`), material table, and **printbox**
+print server configuration (Debian + cncjs + webcam).
 
-## Documentos
+## Documents
 
-| Arquivo | Conteúdo |
+| File | Content |
 |---|---|
-| `docs/ESPECIFICACOES-K1.md` | Hardware, parâmetros `$$`, tabela de materiais 7W |
-| `docs/MANUAL-SERVIDOR-K1.md` | Servidor printbox (Debian + cncjs + webcam) |
-| `docs/MANUAL-ACMER-STUDIO-BOTTLES.md` | ACMER Studio no Linux (Bottles + GE-Proton) |
-| `docs/ACMER-K1-User-Manual-EN.pdf` | Manual oficial ACMER — fonte primária |
+| `docs/SPECIFICATIONS-K1.md` | Hardware, `$$` parameters, 7W material table |
+| `docs/K1-SERVER-MANUAL.md` | Printbox server (Debian + cncjs + webcam) |
+| `docs/ACMER-STUDIO-BOTTLES-MANUAL.md` | ACMER Studio on Linux (Bottles + GE-Proton) |
+| `docs/ACMER-K1-User-Manual-EN.pdf` | Official ACMER manual — primary source |
 
-## Regras imutáveis
+## Screenshots
 
-- Firmware da K1 (`$x=`) **não se altera** — valores de fábrica são corretos
-- Potência/velocidade **sempre da tabela oficial 7W** (manual ACMER)
-- **Nunca** propor troca de hardware (WiFi module, board swap) como solução primária
+![ACMER Studio running via Bottles](assets/acmer-studio.jpg)
 
-## Licença
+![Bottles — ACMER Studio bottle configuration](assets/bottles.jpg)
 
-Documentação — uso livre. PDF oficial ACMER: copyright ACMER.
+![cncjs web interface](assets/cncjs.jpg)
+
+## Immutable Rules
+
+- K1 firmware (`$x=`) **must not be changed** — factory values are correct
+- Power/speed **always from the official 7W table** (ACMER manual)
+- **Never** propose hardware swaps (WiFi module, board swap) as a primary solution
+
+## License
+
+Documentation — free use. Official ACMER PDF: copyright ACMER.

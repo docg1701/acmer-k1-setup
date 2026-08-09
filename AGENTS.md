@@ -1,51 +1,51 @@
 # AGENTS.md
 
-## Contexto do projeto
+## Project Context
 
-Repositório de documentação da gravadora **ACMER K1 7W** e do servidor de
-impressão **printbox** (Debian + cncjs). Idioma: **pt-BR**. Sem código —
-apenas especificações de hardware, parâmetros de firmware, tabela de materiais
-e configuração do servidor.
+Documentation repository for the **ACMER K1 7W** laser engraver and the
+**printbox** print server (Debian + cncjs). Language: **English**. No code —
+only hardware specifications, firmware parameters, material table, and server
+configuration.
 
-## Stack (fatos — não questionar)
+## Stack (facts — do not question)
 
-- **Máquina**: ACMER K1 7W, GRBL 1.1h fork ACMER, USB serial `/dev/ttyACM0` 115200, sem WiFi
-- **Servidor**: Debian 13 (console) + cncjs 1.11.2 (Node 20), porta 8000, hostname `printbox`
-- **Webcam**: ustreamer 5.4, porta 8080, stream MJPEG consumido pelo widget do cncjs
-- **Rede**: servidor IP fixo `10.10.10.190/24`, gateway `10.10.10.1`, hostname `printbox` / `printbox.local`
-- **Usuário**: `galvani` (servidor)
+- **Machine**: ACMER K1 7W, GRBL 1.1h fork ACMER, USB serial `/dev/ttyACM0` 115200, no WiFi
+- **Server**: Debian 13 (console) + cncjs 1.11.2 (Node 20), port 8000, hostname `printbox`
+- **Webcam**: ustreamer 5.4, port 8080, MJPEG stream consumed by the cncjs widget
+- **Network**: server static IP `10.10.10.190/24`, gateway `10.10.10.1`, hostname `printbox` / `printbox.local`
+- **User**: `galvani` (server)
 
-## Source of truth
+## Source of Truth
 
-1. `docs/ACMER-K1-User-Manual-EN.pdf` — tabelas de potência/velocidade
-2. Firmware da máquina (`$$`) — parâmetros de hardware
-3. `docs/ESPECIFICACOES-K1.md` — consolida 1–2
+1. `docs/ACMER-K1-User-Manual-EN.pdf` — power/speed tables
+2. Machine firmware (`$$`) — hardware parameters
+3. `docs/SPECIFICATIONS-K1.md` — consolidates 1–2
 
-## Regras absolutas
+## Absolute Rules
 
-- `$x=` do firmware **nunca se altera**. Fábrica está correto.
-- Potência/velocidade **sempre** da tabela 7W (manual oficial ACMER).
-- **Nunca** propor troca de hardware (WiFi module, board swap) como solução primária.
+- Firmware `$x=` **never changes**. Factory is correct.
+- Power/speed **always** from the 7W table (official ACMER manual).
+- **Never** propose hardware swap (WiFi module, board swap) as primary solution.
 
-## Convenções
+## Conventions
 
-- Tabela de materiais: fonte única no manual oficial ACMER
-- Markdown: pipe tables, sem HTML
+- Material table: sole source is the official ACMER manual
+- Markdown: pipe tables, no HTML
 - PDF: `ACMER-K1-User-Manual-EN.pdf` (ASCII)
 
-## Comandos
+## Commands
 
 ```bash
-# Extrair texto do manual
+# Extract text from manual
 pdftotext -layout docs/ACMER-K1-User-Manual-EN.pdf /tmp/k1_manual.txt
 
-# Versão do cncjs no servidor
+# cncjs version on server
 cncjs --version
 ```
 
-## Limites
+## Limits
 
-- Sem build/test/run — repo de documentação
-- Não recomendar software de controle laser sem verificar manutenção recente
-- ACMER Studio roda no Linux via **Bottles + GE-Proton11-3** — seguir `docs/MANUAL-ACMER-STUDIO-BOTTLES.md`
-- **Nada de Wine puro, LaserGRBL ou Rayforge** — removidos e não voltam
+- No build/test/run — documentation repo
+- Do not recommend laser control software without verifying recent maintenance
+- ACMER Studio runs on Linux via **Bottles + GE-Proton11-3** — follow `docs/ACMER-STUDIO-BOTTLES-MANUAL.md`
+- **No plain Wine, LaserGRBL, or Rayforge** — removed and not coming back
