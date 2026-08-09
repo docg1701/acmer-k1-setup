@@ -53,7 +53,6 @@ rede local.
 | Arquivo | Conteúdo |
 |---|---|
 | `docs/WINE-ACMER-STUDIO-K1.md` | Instalação do ACMER Studio V1.4.0 no Wine (testado e funcional) |
-| `docs/BOTTLES-ACMER-STUDIO-K1.md` | Instalação do ACMER Studio V1.4.0 via Bottles (snapshot e backup) |
 | `docs/WINE-SETUP-K1.md` | Instalação do LaserGRBL no Wine (alternativa) |
 | `docs/MANUAL-SERVIDOR-K1.md` | Debian 13 + cncjs + systemd + webcam, passo a passo |
 | `docs/ACMER-K1-User-Manual-EN.pdf` | Manual oficial ACMER — fonte primária das tabelas de potência/velocidade |
