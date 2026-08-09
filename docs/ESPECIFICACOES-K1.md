@@ -166,3 +166,79 @@ Fontes: <https://ortur.net/pages/materials-reference> ·
 | Corte (contorno) | M3 | 100% | 1500 |
 | Gravação (preenchimento) | M4 | 50% | 8000 |
 | Marcação de contorno (sem cortar) | M4 | 50% | 8000 |
+
+---
+
+## 6. Termoplásticos impressos 3D (PLA, ABS, PETG)
+
+> **Não constam na tabela oficial ACMER.** Valores = extrapolação da tabela
+> 7W (acrílico preto/vermelho — termoplástico mais próximo: 1mm @ 150,
+> 2mm @ 100 mm/min) + dados comunitários (xTool M1/F1, Batch Studio,
+> ComMarker). ⚠️ **Validar com grade de teste** antes de job real.
+>
+> ⚠️ **Fumaça tóxica**: ABS libera estireno (e cianeto em degradação
+> térmica); PLA e PETG liberam VOCs. **Exaustão obrigatória** — o gabinete
+> da K1 contém a fumaça mas **não filtra**. ABS: só com exaustão boa.
+
+### 6.1. Regras gerais (por que cor escura)
+
+- Diodo azul 455nm: **só cores escuras absorvem**. Teste xTool F1 (diodo
+  azul 10W): PLA branco = nenhum efeito; PLA cinza = derretimento irregular;
+  **preto/vermelho = grava limpo**.
+- **PLA**: ponto de fusão baixo (150–180°C) — potência alta derrete e
+  borbulha em vez de gravar. Sempre velocidade alta + potência baixa.
+- **Peça impressa**: imprimir com a face a gravar no bottom e **≥6 camadas
+  sólidas** nela (senão o laser atravessa o infill). Layer lines deixam a
+  gravação com profundidade irregular — gravação rasa é mais limpa.
+
+### 6.2. PLA escuro — ACMER Studio
+
+| Operação | Power% | Speed (mm/min) | Passes | Laser |
+|---|---|---|---|---|
+| **Line** | 35 | 2000 | 1 | M4 |
+| **Fill** | 30 | 4000 | 1 | M4, 10 lines/mm |
+| **Cut 1mm** | 100 | 200 | 1 | M3 |
+| **Cut 2mm** | 100 | 120 | 1–2 | M3 |
+| **Cut 3mm** | 100 | 80 | 2 | M3 |
+
+Teste Fill: 2000–6000 mm/min (derreteu → sobe velocidade). Cut: se não
+atravessar, reduz velocidade — nunca acima de 100%. **4–5mm: corte não é
+realista com 7W** (muitas passes, borda derretida) — gravar ok, cortar
+não.
+
+### 6.3. ABS escuro — ACMER Studio
+
+| Operação | Power% | Speed (mm/min) | Passes | Laser |
+|---|---|---|---|---|
+| **Line** | 30 | 2000 | 1 | M4 |
+| **Fill** | 25 | 3000 | 1 | M4, 10 lines/mm |
+| **Cut 1mm** | 100 | 150 | 1 | M3 |
+| **Cut 2mm** | 100 | 80 | 1–2 | M3 |
+
+> **ABS derrete antes de queimar** (consenso comunitário: Bambu Lab forum,
+> Batch Studio) — corte acima de 2mm vira gosma. Prefira gravação; corte só
+> fino. Fumaça: estireno — exaustão forte.
+
+### 6.4. PETG — ACMER Studio
+
+| Operação | Power% | Speed (mm/min) | Passes | Laser |
+|---|---|---|---|---|
+| **Line** | 30 | 2000 | 1 | M4 |
+| **Fill** | 25 | 4000 | 1 | M4, 10 lines/mm |
+| **Cut 1mm** | 100 | 150 | 1 | M3 |
+
+> PETG absorve pior o 455nm e derrete formando rebarba — corte só fino
+> (1mm). Fumaça: VOCs.
+
+### 6.5. Fontes
+
+- <https://www.batchmade.studio/laser-engrave-3d-prints> (xTool F1: cores
+  PLA/ABS)
+- <https://blog.commarker.com/archives/57631> (PLA: fusão 150–180°C,
+  velocidade alta + potência baixa)
+- <https://xtool.zendesk.com/hc/en-us/articles/15017421813911> (acrílicos,
+  referência de termoplásticos)
+- <https://forum.bambulab.com/t/laser-engraving-3d-printed-parts/74296>
+  (ABS derrete antes de queimar)
+- <https://lahobbyguy.com/bb/viewtopic.php?t=24> (Ortur 7W: evitar 100%
+  em engrave)
