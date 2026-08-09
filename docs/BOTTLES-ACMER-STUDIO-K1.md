@@ -43,10 +43,9 @@ Aguarde a criação (~30 segundos).
 ## 3. Instalar dependências
 
 1. Dentro da bottle `acmer-studio`, aba **Dependencies**
-2. Busque e instale **vcrun2019**
-
-Isso resolve o `concrt140.dll` e demais runtimes Visual C++ 2019.
-Sem terminal, sem SHA256 mismatch — o Bottles baixa e instala sozinho.
+2. Busque e instale **vcredist2019** — resolve `concrt140.dll` e runtimes Visual C++
+3. Busque e instale **allfonts** — fontes do Windows (Arial, Times, etc.).
+   ~250 MB, demora alguns minutos. Corrige texto serrilhado no Electron.
 
 ## 4. Instalar o ACMER Studio
 
