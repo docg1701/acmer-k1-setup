@@ -60,4 +60,10 @@ Check [SPECIFICATIONS-K1.md](docs/SPECIFICATIONS-K1.md) for the official 7W powe
 
 The server runs headless. Upload a G-code file, start the job, and turn off your PC — the server handles everything. Monitor from any browser (PC or phone).
 
+## Webcam
+
+The print server supports a live webcam feed via **ustreamer** (MJPEG stream on port 8080). The cncjs web interface has a webcam widget that consumes this stream.
+
+Setup is covered in the [K1-SERVER-MANUAL.md](docs/K1-SERVER-MANUAL.md) section 11.
+
 
