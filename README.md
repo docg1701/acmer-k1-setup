@@ -22,15 +22,6 @@ This is a complete, tested guide for using the ACMER K1 7W blue-diode laser engr
 - Setting up a print server (Debian + cncjs + webcam) for headless operation
 - Running ACMER Studio on Linux via Bottles + GE-Proton (no Windows needed)
 
-## Documents
-
-| File | Content |
-|---|---|
-| [SPECIFICATIONS-K1.md](docs/SPECIFICATIONS-K1.md) | Hardware, `$$` parameters, 7W material table |
-| [K1-SERVER-MANUAL.md](docs/K1-SERVER-MANUAL.md) | Printbox server (Debian + cncjs + webcam) |
-| [ACMER-STUDIO-BOTTLES-MANUAL.md](docs/ACMER-STUDIO-BOTTLES-MANUAL.md) | ACMER Studio on Linux (Bottles + GE-Proton) |
-| [ACMER-K1-User-Manual-EN.pdf](docs/ACMER-K1-User-Manual-EN.pdf) | Official ACMER manual (primary source) |
-
 ## Quick Start
 
 **1. Use ACMER Studio on Linux**
@@ -66,4 +57,15 @@ The print server supports a live webcam feed via **ustreamer** (MJPEG stream on 
 
 Setup is covered in the [K1-SERVER-MANUAL.md](docs/K1-SERVER-MANUAL.md) section 11.
 
+## Documents
 
+| File | Content |
+|---|---|
+| [SPECIFICATIONS-K1.md](docs/SPECIFICATIONS-K1.md) | Hardware, `$$` parameters, 7W material table |
+| [K1-SERVER-MANUAL.md](docs/K1-SERVER-MANUAL.md) | Printbox server (Debian + cncjs + webcam) |
+| [ACMER-STUDIO-BOTTLES-MANUAL.md](docs/ACMER-STUDIO-BOTTLES-MANUAL.md) | ACMER Studio on Linux (Bottles + GE-Proton) |
+| [ACMER-K1-User-Manual-EN.pdf](docs/ACMER-K1-User-Manual-EN.pdf) | Official ACMER manual (primary source) |
+
+## License
+
+[MIT](LICENSE)
