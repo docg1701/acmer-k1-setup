@@ -125,34 +125,7 @@ upload via `http://10.10.10.190:8000`.
 
 ---
 
-## 8. Tabela de potência/velocidade (7W)
-
-Consulte `docs/ACMER-K1-User-Manual-EN.pdf` — fonte oficial.
-
-| Material | Operação | Potência (%) | Velocidade (mm/min) | Passes |
-|---|---|---|---|---|
-| Compensado 3 mm | Corte | 100 | 200 | 1 |
-| Papel kraft | Gravação | 30 | 6000 | 1 |
-| Couro | Gravação | 40 | 4000 | 1 |
-| Acrílico escuro | Corte | 100 | 150 | 2 |
-| Madeira | Gravação | 60 | 8000 | 1 |
-
----
-
-## 9. Troubleshooting
-
-| Erro | Solução |
-|---|---|
-| `concrt140.dll aborting` | Reexecute `winetricks vcrun2019` + instale x64 manualmente |
-| DLLs nativas não encontradas (opencv, ceres...) | Reexecute o `wine reg add` da seção 4 |
-| Fontes serrilhadas / feias | `winetricks allfonts` |
-| Barra dupla ao maximizar | Reexecute `winecfg` → Graphics → desmarque tudo |
-| Preview 3D com glitch | Limitação Wine, use preview 2D. G-code não afetado |
-| Tela preta / crash | `rm -rf ~/.wine && wineboot -u`, reinstale tudo |
-
----
-
-## 10. Limitações conhecidas
+## 8. Limitações conhecidas
 
 - **Calibração de câmera**: não funciona (irrelevante, K1 não tem câmera)
 - **Smart autofill / IA**: não testado (depende de onnxruntime)
