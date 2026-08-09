@@ -1,14 +1,15 @@
-# MANUAL — ACMER Studio V1.4.0 no Linux Mint via Wine
+# MANUAL — ACMER Studio V1.4.0 no Linux Mint via Wine do sistema
 
 > **Data**: 2026-08-08
 > **Sistema**: Linux Mint 22.3 Cinnamon (x86_64)
 > **Wine**: wine-9.0 (Ubuntu 9.0~repack-4build3)
 > **Winetricks**: 20240105
-> **Resultado**: ACMER Studio abre, interface funcional, geração de G-code operacional
+> **ACMER Studio**: V1.4.0 (15/07/2026)
+> **Resultado**: funcional — design, G-code, interface completa
 
-## 0. Pré-requisitos
+---
 
-Wine já instalado:
+## 0. Instalar Wine do sistema
 
 ```bash
 sudo dpkg --add-architecture i386
@@ -19,64 +20,66 @@ sudo apt update
 sudo apt install --install-recommends winehq-staging winetricks
 ```
 
-Verifique:
+Verifique: `wine --version` → `wine-9.0`
 
-```bash
-wine --version   # wine-9.0
-```
+---
 
-## 1. Download do ACMER Studio
-
-1. Acesse https://acmerlaser.com/pages/acmer-software-download
-2. Clique no botão de download da seção **ACMER Studio V1.4.0**
-3. Salve o `.exe` (ex.: `ACMER_Studio_Setup_V1.4.0.exe`)
-
-## 2. Instalação
-
-Antes de instalar, configure a versão do Windows no Wine:
+## 1. Configurar Wine
 
 ```bash
 winecfg
 ```
 
-Na aba **Applications**, selecione **Windows 10** (não XP 64 bits).
+Na aba **Applications**, Versão do Windows: **Windows 10**.
 
-Depois instale:
+---
+
+## 2. Baixar e instalar o ACMER Studio
+
+1. Acesse https://acmerlaser.com/pages/acmer-software-download
+2. Baixe o instalador (V1.4.0)
+3. Execute:
 
 ```bash
-wine ~/Downloads/ACMER_Studio_Setup_*.exe
+wine ~/Downloads/ACMER_Studio_Setup_V1.4.0.exe
 ```
 
-Siga o instalador: Next → Next → Install → Finish. Marque "Create desktop shortcut" se oferecido.
+Siga o instalador: Next → Next → Install → Finish.
 
-## 3. Instalar Visual C++ Runtime (vcrun2019)
+---
 
-O ACMER Studio depende de `concrt140.dll` e outros runtimes do Visual C++ 2019.
-Sem isso, o programa crasha no lançamento.
+## 3. Instalar dependências via winetricks
+
+### 3.1 Visual C++ Runtime 2019
 
 ```bash
 winetricks vcrun2019
 ```
 
-**SHA256 mismatch esperado**: o pacote no servidor da Microsoft é atualizado com
-frequência e o checksum do winetricks fica desatualizado. Responda **Y** para continuar
-em ambas as perguntas (x86 e x64).
+Aceite **Y** para continuar nos avisos de checksum (o pacote da Microsoft é
+atualizado com frequência e o hash do winetricks fica desatualizado).
 
-**Erro no vc_redist.x64.exe**: a instalação do x64 pode retornar status 102. Se
-acontecer, instale manualmente:
+Se o `vc_redist.x64.exe` falhar com status 102:
 
 ```bash
 cd ~/.cache/winetricks/vcrun2019
 wine vc_redist.x64.exe /quiet /norestart
 ```
 
-## 4. Corrigir PATH de DLLs nativas
+### 3.2 Fontes do Windows
 
-Os módulos nativos do ACMER Studio (OpenCV, Ceres, OR-Tools, ONNX Runtime etc.)
-ficam em subdiretórios de `resources/tools/win/`. O loader do Wine não busca
-dentro dessas pastas — os DLLs existem mas não são encontrados.
+```bash
+winetricks allfonts
+```
 
-Adicione os diretórios ao PATH do Wine:
+~250 MB. Corrige texto serrilhado no Electron do ACMER Studio.
+
+---
+
+## 4. PATH das DLLs nativas
+
+Os módulos C++ do ACMER Studio (OpenCV, Ceres, OR-Tools, ONNX Runtime) ficam em
+subdiretórios de `resources/tools/win/`. O Wine não busca nessas pastas.
 
 ```bash
 wine reg add "HKLM\System\CurrentControlSet\Control\Session Manager\Environment" \
@@ -87,56 +90,60 @@ wine reg add "HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
 
 Saída esperada: `reg: A operação foi completada com sucesso`
 
-## 5. Abrir o ACMER Studio
+---
+
+## 5. Configuração de janela (Mint/Cinnamon)
+
+O ACMER Studio usa Electron com title bar customizada. Maximizar empilha a barra
+do Cinnamon sobre a do app.
+
+```bash
+winecfg
+```
+
+Aba **Graphics** → desmarque **todas** as opções em "Window settings":
+
+- ❌ Allow the window manager to decorate the windows
+- ❌ Allow the window manager to control the windows
+
+---
+
+## 6. Abrir o programa
 
 ```bash
 wine "C:\Program Files\ACMER Studio\ACMER Studio.exe"
 ```
 
-Warnings cosméticos normais que **não afetam o funcionamento**:
+### Warnings normais (ignorar)
 
-- `ntlm_check_version ntlm_auth was not found` — resolva com `sudo apt install winbind` (opcional)
-- `RoGetActivationFactory Failed to find library for L"Windows.Devices.Input.PenDevice"` — API UWP, sem suporte Wine (irrelevante)
-- `wglSetPixelFormatWINE failed` — renderização 3D com glitches visuais no preview (não afeta G-code)
-- `EGL Driver message (Error) eglCreateContext` — mesmo do acima
-- `remote_font_face_source.cc(372)] NOTREACHED hit` — fallback de fontes do Electron, inofensivo
+| Warning | Impacto |
+|---|---|
+| `WSALookupServiceBegin failed with: 8` | Nenhum — detecção de rede do Electron |
+| `RoGetActivationFactory Failed ... PenDevice` | Nenhum — API UWP, sem suporte no Wine |
+| `wglSetPixelFormatWINE failed` | Visual — preview 3D pode ter glitch. G-code não afetado |
+| `ntlm_check_version ntlm_auth was not found` | Nenhum — resolva com `sudo apt install winbind` |
+| `remote_font_face_source.cc NOTREACHED` | Nenhum — fallback de fonte |
 
-## 6. Conectar na K1 (opcional, só se a máquina estiver conectada via USB neste PC)
+---
+
+## 7. Conexão com a K1 (opcional)
+
+Se a K1 estiver conectada via USB neste PC:
 
 ```bash
 ln -sf /dev/ttyACM0 ~/.wine/dosdevices/com10
 ```
 
-No ACMER Studio, selecione **COM10** com **115200 baud**.
+No ACMER Studio, **COM10** a **115200**.
 
-Se a K1 estiver no servidor remoto (printbox), ignore este passo.
-Gere o G-code, salve como `.nc` ou `.gcode`, e faça upload via cncjs em
-`http://10.10.10.190:8000`.
+Se a K1 estiver no servidor printbox, ignore. Apenas exporte o G-code e faça
+upload via `http://10.10.10.190:8000`.
 
-## 7. Fluxo completo
-
-```text
-[Seu PC - Linux Mint]
-  │
-  ├── Wine + ACMER Studio V1.4.0
-  │     ├── Design (vetores, texto, imagens)
-  │     ├── Configurar potência, velocidade, passes
-  │     └── Exportar G-code (.nc)
-  │
-  │  WiFi — upload via cncjs web UI
-  ▼
-[printbox - Debian 13]
-  │  cncjs :8000 — recebe .nc, streama via USB
-  │  ustreamer :8080 — webcam
-  │
-  │  USB serial 115200
-  ▼
-[ACMER K1] GRBL — executa
-```
+---
 
 ## 8. Tabela de potência/velocidade (7W)
 
-Consulte `docs/ACMER-K1-User-Manual-EN.pdf` — tabela oficial do fabricante.
+Consulte `docs/ACMER-K1-User-Manual-EN.pdf` — fonte oficial.
 
 | Material | Operação | Potência (%) | Velocidade (mm/min) | Passes |
 |---|---|---|---|---|
@@ -146,68 +153,26 @@ Consulte `docs/ACMER-K1-User-Manual-EN.pdf` — tabela oficial do fabricante.
 | Acrílico escuro | Corte | 100 | 150 | 2 |
 | Madeira | Gravação | 60 | 8000 | 1 |
 
-## 8. Ajuste de janela (Mint/Cinnamon)
-
-O ACMER Studio usa Electron com title bar customizada. No Cinnamon, maximizar
-empilha a barra do sistema sobre a do app.
-
-**Correção**: abra o `winecfg`, aba **Graphics**, desmarque **todas** as opções
-em "Window settings" ("Allow the window manager to decorate the windows" e
-"Allow the window manager to control the windows").
-
-O ACMER Studio agora maximiza limpo, só com a barra do Electron.
+---
 
 ## 9. Troubleshooting
 
-### "concrt140.dll aborting"
-
-```bash
-winetricks vcrun2019
-```
-
-Se o x64 falhar, instale manualmente (seção 3).
-
-### DLLs nativas não encontradas (opencv, ortools, ceres, onnxruntime...)
-
-Reexecute o comando `wine reg add` da seção 4.
-
-### ACMER Studio não abre (tela preta ou crash silencioso)
-
-```bash
-# Limpar prefixo e reinstalar
-rm -rf ~/.wine
-wineboot -u
-# Reinstale o ACMER Studio + vcrun2019 + PATH
-```
-
-### Erro "WSALookupServiceBegin failed with: 8"
-
-Inofensivo. O Electron tenta detectar mudanças de rede e falha no Wine. Não
-afeta nada.
-
-### Preview 3D não renderiza (tela branca ou glitch)
-
-Limitação do Wine/OpenGL. O G-code gerado não é afetado. Use o preview 2D
-(linhas de contorno) como alternativa.
-
-### NTLM / ntlm_auth warnings
-
-```bash
-sudo apt install winbind
-```
+| Erro | Solução |
+|---|---|
+| `concrt140.dll aborting` | Reexecute `winetricks vcrun2019` + instale x64 manualmente |
+| DLLs nativas não encontradas (opencv, ceres...) | Reexecute o `wine reg add` da seção 4 |
+| Fontes serrilhadas / feias | `winetricks allfonts` |
+| Barra dupla ao maximizar | Reexecute `winecfg` → Graphics → desmarque tudo |
+| Preview 3D com glitch | Limitação Wine, use preview 2D. G-code não afetado |
+| Tela preta / crash | `rm -rf ~/.wine && wineboot -u`, reinstale tudo |
 
 ---
 
-## Notas finais
+## 10. Limitações conhecidas
 
-- **Calibração de câmera**: não funciona (irrelevante para K1, não tem câmera)
-- **Smart autofill / IA**: não testado (depende de onnxruntime carregar modelo)
+- **Calibração de câmera**: não funciona (irrelevante, K1 não tem câmera)
+- **Smart autofill / IA**: não testado (depende de onnxruntime)
 - **Path optimization / nesting**: não testado
-- **Geração de G-code básica (corte vetorial, gravação)**: funcional
-- **Conexão direta via USB/COM**: funcional com o link simbólico
-
-O ACMER Studio é um app Electron + módulos nativos C++. Wine 9.0 suporta
-Electron razoavelmente bem — o programa abre e a interface responde. Os módulos
-nativos mais pesados (calibração, otimização) têm dependências não triviais e
-podem falhar silenciosamente. Para uso básico (design vetorial + export G-code),
-funciona.
+- **Preview 3D**: glitches visuais, não afeta G-code
+- **ACMER Studio é Windows-only**: Electron + C++ nativo. Wine 9.0 funciona, mas
+  atualizações futuras do ACMER Studio podem quebrar compatibilidade
