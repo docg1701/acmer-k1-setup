@@ -1,2 +1,9 @@
-download/
+# Ignora conteúdo mas mantém diretórios
+download/*
+!download/.gitkeep
+projects/*
+!projects/.gitkeep
+gcode/*
+!gcode/.gitkeep
+
 *:Zone.Identifier
