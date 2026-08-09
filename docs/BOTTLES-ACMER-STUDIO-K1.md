@@ -4,7 +4,7 @@
 > **Sistema**: Linux Mint 22.3 Cinnamon (x86_64)
 > **Bottles**: 65.3 (Flatpak)
 > **Objetivo**: ACMER Studio V1.4.0 em ambiente Wine isolado, reprodutível via snapshot
-> **Runner**: `built-in wine 11.0` (obrigatório — `soda-11.0-4` não funciona)
+> **Runner**: `caffe` (recomendado — base Wine 9.x, melhor compatibilidade com Electron)
 
 ## 0. Por que Bottles
 
@@ -35,7 +35,7 @@ flatpak run com.usebottles.bottles
 1. **Create Bottle** (botão `+` no canto superior esquerdo)
 2. Nome: `acmer-studio`
 3. Environment: **Application**
-4. Runner: **built-in wine 11.0** (obrigatório — `soda-11.0-4` falha no Electron do ACMER Studio)
+4. Runner: **caffe** (recomendado — `wine-11` funciona mas tem glitch de janela, `soda` não funciona)
 5. Clique **Create**
 
 Aguarde a criação (~30 segundos).
