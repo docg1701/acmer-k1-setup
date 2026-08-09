@@ -60,12 +60,4 @@ Check [SPECIFICATIONS-K1.md](docs/SPECIFICATIONS-K1.md) for the official 7W powe
 
 The server runs headless. Upload a G-code file, start the job, and turn off your PC — the server handles everything. Monitor from any browser (PC or phone).
 
-## Immutable Rules
 
-- K1 firmware (`$x=`) **must not be changed** — factory values are correct
-- Power/speed **always from the official 7W table** (ACMER manual)
-- **Never** propose hardware swaps (WiFi module, board swap) as a primary solution
-
-## License
-
-Documentation — free use. Official ACMER PDF: copyright ACMER.
