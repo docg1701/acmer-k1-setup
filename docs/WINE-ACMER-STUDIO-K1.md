@@ -37,13 +37,10 @@ Siga o instalador: Next → Next → Install → Finish.
 ### 3.1 Visual C++ Runtime 2019
 
 ```bash
-winetricks vcrun2019
+winetricks --force vcrun2019
 ```
 
-Aceite **Y** para continuar nos avisos de checksum (o pacote da Microsoft é
-atualizado com frequência e o hash do winetricks fica desatualizado).
-
-Se o `vc_redist.x64.exe` falhar com status 102:
+Se o `vc_redist.x64.exe` falhar com status 102 após o --force:
 
 ```bash
 cd ~/.cache/winetricks/vcrun2019
@@ -53,7 +50,7 @@ wine vc_redist.x64.exe /quiet /norestart
 ### 3.2 Fontes do Windows
 
 ```bash
-winetricks allfonts
+winetricks --force allfonts
 ```
 
 ~250 MB. Corrige texto serrilhado no Electron do ACMER Studio.
