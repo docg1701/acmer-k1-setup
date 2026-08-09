@@ -10,6 +10,7 @@ servidor de impressão **printbox**.
 |---|---|
 | `docs/ESPECIFICACOES-K1.md` | Hardware, parâmetros `$$`, tabela de materiais 7W |
 | `docs/MANUAL-SERVIDOR-K1.md` | Servidor printbox (Debian + cncjs + webcam) |
+| `docs/MANUAL-ACMER-STUDIO-BOTTLES.md` | ACMER Studio no Linux (Bottles + GE-Proton) |
 | `docs/ACMER-K1-User-Manual-EN.pdf` | Manual oficial ACMER — fonte primária |
 
 ## Regras imutáveis

@@ -47,4 +47,5 @@ cncjs --version
 
 - Sem build/test/run — repo de documentação
 - Não recomendar software de controle laser sem verificar manutenção recente
-- **Nada de Wine, Bottles, LaserGRBL, ACMER Studio, Rayforge** — isso foi removido e não volta
+- ACMER Studio roda no Linux via **Bottles + GE-Proton11-3** — seguir `docs/MANUAL-ACMER-STUDIO-BOTTLES.md`
+- **Nada de Wine puro, LaserGRBL ou Rayforge** — removidos e não voltam
