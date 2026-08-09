@@ -2,8 +2,9 @@
 
 > **Data**: 2026-08-08
 > **Sistema**: Linux Mint 22.3 Cinnamon (x86_64)
-> **Bottles**: Flatpak, última versão estável
+> **Bottles**: 65.3 (Flatpak)
 > **Objetivo**: ACMER Studio V1.4.0 em ambiente Wine isolado, reprodutível via snapshot
+> **Runner**: `built-in wine 11.0` (obrigatório — `soda-11.0-4` não funciona)
 
 ## 0. Por que Bottles
 
@@ -34,7 +35,7 @@ flatpak run com.usebottles.bottles
 1. **Create Bottle** (botão `+` no canto superior esquerdo)
 2. Nome: `acmer-studio`
 3. Environment: **Application**
-4. Runner: **sys-wine-9.0** (usa o Wine já instalado no sistema, testado e funcional)
+4. Runner: **built-in wine 11.0** (obrigatório — `soda-11.0-4` falha no Electron do ACMER Studio)
 5. Clique **Create**
 
 Aguarde a criação (~30 segundos).
@@ -61,8 +62,14 @@ em subdiretórios e o loader do Wine não os encontra. Precisa adicionar ao PATH
 Na bottle, vá em **Tools → Command Line** e cole:
 
 ```bash
-wine reg add "HKLM\\System\\CurrentControlSet\\Control\\Session Manager\\Environment" /v PATH /t REG_EXPAND_SZ /d "C:\\Program Files\\ACMER Studio\\resources\\tools\\win\\Calibrate;C:\\Program Files\\ACMER Studio\\resources\\tools\\win\\PathOpt;C:\\Program Files\\ACMER Studio\\resources\\tools\\win\\BatchDup;%PATH%" /f
+reg add "HKLM\System\CurrentControlSet\Control\Session Manager\Environment" /v PATH /t REG_EXPAND_SZ /d "C:\Program Files\ACMER Studio\resources\tools\win\Calibrate;C:\Program Files\ACMER Studio\resources\tools\win\PathOpt;C:\Program Files\ACMER Studio\resources\tools\win\BatchDup;%PATH%" /f
 ```
+
+Ou via GUI: **Opções → Registry Rules** →
+- Key: `HKLM\System\CurrentControlSet\Control\Session Manager\Environment`
+- Value: `PATH`
+- Type: `REG_SZ`
+- Data: `C:\Program Files\ACMER Studio\resources\tools\win\Calibrate;C:\Program Files\ACMER Studio\resources\tools\win\PathOpt;C:\Program Files\ACMER Studio\resources\tools\win\BatchDup;%PATH%`
 
 Saída esperada: `The operation completed successfully`.
 
