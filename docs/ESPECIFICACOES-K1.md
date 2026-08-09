@@ -121,25 +121,41 @@ Bico protetor magnético (fácil remover para limpeza).
 
 ---
 
-## 4. Papelão ondulado (caixa)
+## 4. Papelão ondulado (caixa) — corrugado 4mm
 
-> Estimativa baseada em kraft paper 2,0mm. Papelão é mais denso e espesso (3–5mm).
-> Testar grade de potência/velocidade para calibrar.
+> **Não consta na tabela oficial ACMER.** Valores abaixo = extrapolação da
+> tabela 7W (kraft paper 2mm sólido: 100% @ 300 mm/min) + dados comunitários
+> de máquinas com laser azul ~5.5–7W (Ortur). Corrugado tem 2 camadas finas
+> de liner + miolo vazado → **menos fibra que papel sólido da mesma
+> espessura** → corta mais rápido que kraft 2mm.
+>
+> ⚠️ Validar com grade de teste antes de job real. Se não atravessar:
+> **reduzir velocidade ou 2 passes** — nunca subir potência acima de 100% e
+> cuidado com queima (papel/celulose pega fogo fácil em velocidade baixa).
 
-### Corte (M3)
+### Configuração ACMER Studio — material custom "Papelão corrugado 4mm"
 
-| Espessura | Potência | Velocidade (mm/min) | Passes |
-|---|---|---|---|
-| 3mm | 100% | 150 | 1–2 |
-| 4–5mm | 100% | 100 | 2–3 |
+| Operação | Power% | Speed (mm/min) | Passes | Laser |
+|---|---|---|---|---|
+| **Line** | 35 | 5000 | 1 | M4 |
+| **Fill** | 50 | 8000 | 1 | M4, 10 lines/mm |
+| **Cut** | 100 | 450 | 1 | M3 |
 
-### Gravação (M4, 10 lines/mm)
+Faixa de teste do Cut: **350–600 mm/min** (450 = meio-termo entre kraft 2mm
+sólido @ 300 e corrugado 3mm Ortur @ 500).
 
-| Profundidade | Potência | Velocidade (mm/min) | Passes |
-|---|---|---|---|
-| Superficial (marcação) | 30–40% | 6000–8000 | 1 |
-| Média | 50–60% | 4000–5000 | 1 |
-| Profunda | 70–80% | 2000–3000 | 1 |
+### Referências comunitárias (diodo azul, corrugado)
+
+| Fonte | Laser | Material | Operação | Speed (mm/min) | Power | Passes |
+|---|---|---|---|---|---|---|
+| Ortur oficial | 5.5W | Corrugado 3mm | Cut | 500 | 100% | 1 |
+| ZapCraft | 5W | 1–3mm | Cut | 330 | 70% | 2 |
+| ZapCraft | 10W | 1–3mm | Cut | 600 | 70% | 1 |
+| Atomstack A20 | 20W | Cardboard | Cut | 800 | 50% | 1 |
+
+Fontes: <https://ortur.net/pages/materials-reference> ·
+<https://zapcraft.net/material-settings/cardboard-laser-settings-starting-points/> ·
+<https://www.bonnycreations.com/settings/materials/corrugated-cardboard>
 
 ---
 
