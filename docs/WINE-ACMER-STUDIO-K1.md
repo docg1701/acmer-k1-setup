@@ -4,7 +4,7 @@
 > **Sistema**: Linux Mint 22.3 Cinnamon (x86_64)
 > **Wine**: wine-9.0
 > **ACMER Studio**: V1.4.0 (15/07/2026)
-> **Resultado**: funcional — design, G-code, interface completa
+> **DXVK**: 2.5.3 (Vulkan 1.2 — compatível com Mesa 25.2.8)
 
 ---
 
@@ -14,53 +14,36 @@
 winecfg
 ```
 
-Na aba **Applications**, Versão do Windows: **Windows 10**.
+Aba **Applications**: **Windows 10**.
 
 ---
 
-## 2. Baixar e instalar o ACMER Studio
-
-1. Acesse https://acmerlaser.com/pages/acmer-software-download
-2. Baixe o instalador (V1.4.0)
-3. Execute:
+## 2. Instalar ACMER Studio
 
 ```bash
 wine ~/Downloads/ACMER_Studio_Setup_V1.4.0.exe
 ```
 
-Siga o instalador: Next → Next → Install → Finish.
+Next → Next → Install → Finish.
 
 ---
 
-## 3. Instalar dependências via winetricks
-
-### 3.1 Visual C++ Runtime 2019
+## 3. Dependências
 
 ```bash
 winetricks --force vcrun2019
-```
-
-Se o `vc_redist.x64.exe` falhar com status 102 após o --force:
-
-```bash
 cd ~/.cache/winetricks/vcrun2019
 wine vc_redist.x64.exe /quiet /norestart
-```
 
-### 3.2 Fontes do Windows
-
-```bash
 winetricks --force allfonts
 ```
 
-~250 MB. Corrige texto serrilhado no Electron do ACMER Studio.
+`vc_redist.x64.exe` falha com status 102 via winetricks — instalação manual.
+`allfonts`: ~250 MB, corrige texto serrilhado.
 
 ---
 
 ## 4. PATH das DLLs nativas
-
-Os módulos C++ do ACMER Studio (OpenCV, Ceres, OR-Tools, ONNX Runtime) ficam em
-subdiretórios de `resources/tools/win/`. O Wine não busca nessas pastas.
 
 ```bash
 wine reg add "HKLM\System\CurrentControlSet\Control\Session Manager\Environment" \
@@ -69,30 +52,48 @@ wine reg add "HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
   /f
 ```
 
-Saída esperada: `reg: A operação foi completada com sucesso`
+---
+
+## 5. DXVK 2.5.3
+
+O Mesa 25.2.8 do Mint 22.3 não suporta `khrLoadStoreOpNone` (Vulkan 1.3).
+DXVK ≥3.0 exige essa extensão. Use a versão 2.5.3:
+
+```bash
+cd /tmp
+wget https://github.com/doitsujin/dxvk/releases/download/v2.5.3/dxvk-2.5.3.tar.gz
+tar xf dxvk-2.5.3.tar.gz
+cp dxvk-2.5.3/x64/*.dll ~/.wine/drive_c/windows/system32/
+
+wine reg add "HKCU\Software\Wine\DllOverrides" /v "d3d11" /t REG_SZ /d "native,builtin" /f
+wine reg add "HKCU\Software\Wine\DllOverrides" /v "dxgi" /t REG_SZ /d "native,builtin" /f
+wine reg add "HKCU\Software\Wine\DllOverrides" /v "d3d10core" /t REG_SZ /d "native,builtin" /f
+```
+
+Sem DXVK: grid da área de trabalho e camadas de imagem não renderizam.
 
 ---
 
-## 5. Configuração de janela (Mint/Cinnamon)
-
-O ACMER Studio usa Electron com title bar customizada. Maximizar empilha a barra
-do Cinnamon sobre a do app.
+## 6. Configuração de janela (Mint/Cinnamon)
 
 ```bash
 winecfg
 ```
 
-Aba **Graphics** → desmarque **todas** as opções em "Window settings":
+Aba **Graphics** → desmarque tudo em "Window settings":
 
 - ❌ Allow the window manager to decorate the windows
 - ❌ Allow the window manager to control the windows
 
 ---
 
-## 6. Mapear diretório home
+## 7. Mapear diretório home
 
-Abra o `winecfg`, aba **Drives** → **Add**.
+```bash
+winecfg
+```
 
+Aba **Drives** → **Add**:
 - Letra: `D:`
 - Pasta: `/home/galvani`
 
@@ -100,25 +101,15 @@ Agora o ACMER Studio acessa teus arquivos em `D:\`.
 
 ---
 
-## 7. Abrir o programa
+## 8. Abrir
 
 ```bash
 wine "C:\Program Files\ACMER Studio\ACMER Studio.exe"
 ```
 
-### Warnings normais (ignorar)
-
-| Warning | Impacto |
-|---|---|
-| `WSALookupServiceBegin failed with: 8` | Nenhum — detecção de rede do Electron |
-| `RoGetActivationFactory Failed ... PenDevice` | Nenhum — API UWP, sem suporte no Wine |
-| `wglSetPixelFormatWINE failed` | Visual — preview 3D pode ter glitch. G-code não afetado |
-| `ntlm_check_version ntlm_auth was not found` | Nenhum — resolva com `sudo apt install winbind` |
-| `remote_font_face_source.cc NOTREACHED` | Nenhum — fallback de fonte |
-
 ---
 
-## 8. Conexão com a K1 (opcional)
+## 9. Conexão com a K1 (opcional)
 
 Se a K1 estiver conectada via USB neste PC:
 
@@ -126,18 +117,29 @@ Se a K1 estiver conectada via USB neste PC:
 ln -sf /dev/ttyACM0 ~/.wine/dosdevices/com10
 ```
 
-No ACMER Studio, **COM10** a **115200**.
+No ACMER Studio: **COM10** a **115200**.
 
-Se a K1 estiver no servidor printbox, ignore. Apenas exporte o G-code e faça
-upload via `http://10.10.10.190:8000`.
+Se a K1 estiver no servidor printbox, ignore — exporte o G-code e faça upload
+via `http://10.10.10.190:8000`.
 
 ---
 
-## 9. Limitações conhecidas
+## 10. Warnings normais (ignorar)
 
-- **Calibração de câmera**: não funciona (irrelevante, K1 não tem câmera)
-- **Smart autofill / IA**: não testado (depende de onnxruntime)
+| Warning | Impacto |
+|---|---|
+| `WSALookupServiceBegin failed with: 8` | Nenhum — detecção de rede do Electron |
+| `RoGetActivationFactory Failed ... PenDevice` | Nenhum — API UWP |
+| `DXVK: No adapters found` | DXVK instalado corretamente evita isso |
+| `ntlm_check_version` | Nenhum — resolva com `sudo apt install winbind` |
+
+---
+
+## 11. Limitações conhecidas
+
+- **Calibração de câmera**: não funciona (K1 não tem câmera)
+- **Smart autofill / IA**: não testado
 - **Path optimization / nesting**: não testado
-- **Preview 3D**: glitches visuais, não afeta G-code
-- **ACMER Studio é Windows-only**: Electron + C++ nativo. Wine 9.0 funciona, mas
-  atualizações futuras do ACMER Studio podem quebrar compatibilidade
+- **Geração de G-code (corte vetorial, gravação)**: funcional
+- **ACMER Studio é Windows-only**: Electron + módulos C++ nativos. Wine 9.0 +
+  DXVK 2.5.3 funciona. Atualizações futuras do ACMER Studio podem quebrar.
