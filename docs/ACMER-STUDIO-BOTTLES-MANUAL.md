@@ -57,7 +57,7 @@ flatpak install flathub com.usebottles.bottles
 > The pattern is a filesystem override, something like:
 >
 > ```bash
-> flatpak override --user --filesystem=/home/galvani/acmer-studio-files com.usebottles.bottles
+> flatpak override --user --filesystem=/home/username/acmer-studio-files com.usebottles.bottles
 > ```
 
 5. Run the command in a terminal, **close Bottles**, and restart the process,
