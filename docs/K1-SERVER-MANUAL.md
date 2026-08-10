@@ -32,7 +32,7 @@ byte by byte. Nothing is repeated on the server.
 2. Flash to a USB stick (e.g.: `dd if=debian.iso of=/dev/sdX bs=4M status=progress`)
 3. Boot from the USB and install:
    - **Hostname**: `printbox`
-   - **User**: `galvani` + password
+   - **User**: `username` + password
    - **Network**: during installation, connect to **WiFi** (the installer configures it)
    - **Partitioning**: guided, entire disk (the disk has nothing important)
    - **Software selection**: check **SSH server** + **standard system utilities**
@@ -138,7 +138,7 @@ Note down `10.10.10.190` — this IP goes in the browser, always.
 The mini PC has no monitor — manage it via SSH from your PC:
 
 ```bash
-ssh galvani@10.10.10.190
+ssh username@10.10.10.190
 ```
 
 ---
@@ -164,7 +164,7 @@ cat > ~/.cncrc <<'EOF'
 {
   "controller": "Grbl",
   "baudrates": [115200, 250000],
-  "watchDirectory": "/home/galvani/gcode"
+  "watchDirectory": "/home/username/gcode"
 }
 EOF
 ```
@@ -185,7 +185,7 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=galvani
+User=username
 ExecStart=/usr/local/bin/cncjs -H 0.0.0.0 -p 8000 --controller Grbl
 Restart=on-failure
 RestartSec=5
@@ -260,7 +260,7 @@ The device is `/dev/ttyACM0` — use that name in cncjs.
 **Method 1 — browser**: cncjs → G-code tab → **Upload** → select `placard.nc`
 
 **Method 2 — monitored folder**: copy the file to `~/gcode` on the mini PC
-(`scp placard.nc galvani@10.10.10.190:/home/galvani/gcode/`) — it appears in the web UI
+(`scp placard.nc username@10.10.10.190:/home/username/gcode/`) — it appears in the web UI
 by itself.
 
 ### 6.3. Run
@@ -346,7 +346,7 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=galvani
+User=username
 ExecStart=/usr/bin/ustreamer --host=0.0.0.0 --port=8080 --device=/dev/video0 -r 1280x720 -f 15
 Restart=on-failure
 RestartSec=5

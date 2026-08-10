@@ -28,7 +28,7 @@ unmanaged mode + native modal dialog; fix: **virtual desktop** (section 4).
    - uncheck *"Allow the window manager to decorate the windows"*
    - check **"Emulate a virtual desktop"** (1920×1080) ← fixes the keyboard
      in save/export dialogs
-6. Copy the tool DLLs to the exe directory (command block in section 6.4) —
+6. Copy the tool DLLs to the exe directory (section 5) —
    without this, Calibrate/PathOpt/BatchDup won't load
 7. Run ACMER Studio via Bottles
 
@@ -60,9 +60,9 @@ flatpak install flathub com.usebottles.bottles
 > flatpak override --user --filesystem=/home/username/acmer-studio-files com.usebottles.bottles
 > ```
 
-5. Run the command in a terminal, **close Bottles**, and restart the process,
+1. Run the command in a terminal, **close Bottles**, and restart the process,
    pointing to the **same directory**.
-6. Now Bottles accepts the directory — create the bottle normally.
+2. Now Bottles accepts the directory — create the bottle normally.
 
 ---
 
@@ -81,9 +81,11 @@ If the runner is not yet installed: Bottles → **Preferences** →
 Without these steps the app won't start properly. With the bottle selected:
 
 1. **Console** (from the bottle) → run:
+
    ```bash
    winecfg
    ```
+
 2. **Graphics** tab → **uncheck** both items:
    - `Allow the window manager to control the windows`
    - `Allow the window manager to decorate the windows`
@@ -98,104 +100,23 @@ Without these steps the app won't start properly. With the bottle selected:
 
 ---
 
-## 5. Running ACMER Studio
+## 5. DLL Verification (mandatory before running)
+
+The tool DLLs shipped with ACMER Studio live in subfolders under
+`resources\tools\win\` (`Calibrate\`, `PathOpt\`, `BatchDup\`). Wine's DLL
+search order is: exe directory → system32 → PATH — and these folders are not
+in the bottle's PATH. Result: `Calibrate`, `PathOpt`, and `BatchDup` tools
+fail to load (`err:module:import_dll` in the log).
+
+**Fix**: copy the tool DLLs to the exe directory (first place in search order).
+Also copy `libvkd3d-utils-1.dll` from the runner to the bottle's system32
+(silences the DXCore fallback noise — rendering already goes through DXVK).
+
+Single block, ready to paste in a Linux terminal:
 
 ```bash
-# Bottle console
-wine /path/to/ACMERStudio.exe
-```
-
-**Validated — works:**
-- Interface renders correctly
-- Projects save
-- G-code export works
-
----
-
-## 6. History: Keyboard in G-code Export Dialog (resolved)
-
-**Symptom**: when opening the G-code export dialog, you can't type the file
-name; the keyboard doesn't work and the main window "loses all functionality"
-(click, but nothing responds).
-
-### 6.1. Log Facts (run 2026-08-09)
-
-| Finding | Reading |
-|---|---|
-| App is **Electron + Node** (errors `network_change_notifier_win.cc`, JS renderer logs, IPC `msg { type: 'init', ... }`) | Keyboard input goes through Chromium; native dialogs go to Wine's comdlg32 |
-| Corrupted Chinese text (mojibake GBK) in logs | ACMER app in Chinese; Chromium IME/keyboard is sensitive to this |
-| `DXVK: v3.0.2` + `AMD Radeon Graphics (RADV RENOIR)` | AMD iGPU (Ryzen 4000 APU); render via Vulkan/DXVK |
-| Second DXVK init at end of log (`03b4:... Game: ACMER Studio.exe`) | Likely Chromium GPU process restart at dialog time |
-| `opencv_*3415.dll`, `ceres.dll`, `ortools.dll`, `libprotobuf.dll`, `tinyxml2.dll`, `onnxruntime.dll`, `libsodium.dll` not found | **Calibrate**, **PathOpt**, and **BatchDup (smart autofill)** tools don't load — not the keyboard problem |
-| `libvkd3d-utils-1.dll` / `wined3d.dll` not found | DXCore fallback noise; render is already via DXVK. Cosmetic |
-| `WSALookupServiceBegin failed: 8` | App trying network; harmless |
-
-### 6.2. Diagnosis
-
-**Evidence in the app (app.asar, 2026-08-09)**: G-code export and
-save/save-as use Electron's `dialog.showSaveDialog` → on Windows this opens
-the **native Win32 dialog** (comdlg32 → `GetSaveFileNameW`), a separate modal
-window, owner of the main window.
-
-The symptom (main window disabled + name field without keyboard) is classic
-Wine behavior in **unmanaged mode** ("Allow the window manager to control the
-windows" OFF — required for the app to start): Wine handles X11 focus alone
-and **modal dialogs don't receive keyboard focus** — keystrokes don't reach
-the field; the owner window gets disabled by modality (that's why "click but
-nothing works"). Documented Wine bug for years, with the SAME config combo
-(decorate OFF + control OFF + no virtual desktop). GE-Proton makes it worse:
-it carries Valve's focus patch that "may break modal dialogs" (commit
-`d30ce49`).
-
-It's not a Chromium crash — it's the modal waiting for input that never
-arrives (confirm with Esc: if it closes, it's focus, not hang).
-
-### 6.2.1. Fixes (prioritized)
-
-**✅ Resolved on 2026-08-09: virtual desktop.** `winecfg` → Graphics →
-**"Emulate a virtual desktop"** (1920×1080) — tested and working: the app
-starts, the G-code export dialog receives keyboard, and the file name is
-editable. Wine becomes the owner of all windows and controls focus
-internally; the WM never touches the windows — fixes both sides (app starts
-without WM interference; modal receives keyboard).
-
-Other tested/manual options (kept as reference, not used):
-
-1. **Click the name field before typing** (zero cost): Electron/Chromium modal
-   dialogs sometimes only receive keyboard after a click
-   (electron/electron#42948).
-2. **sys-wine runner** (without Proton focus patches): swap GE-Proton11-3 for
-   sys-wine/kron4ek (already installed in Bottles) and revalidate app +
-   dialog.
-3. **`ELECTRON_DISABLE_GPU=1`** in the bottle: only if the freeze seems like
-   a renderer hang after the above tests.
-
-### 6.4. DLL Verification (2026-08-09, on disk)
-
-The DLLs flagged in the log **are not missing** — they're in the tool folders
-under `resources\tools\win\`:
-
-| DLL | Location | Status |
-|---|---|---|
-| `opencv_*3415.dll`, `ceres.dll`, `gflags.dll`, `glog.dll`, `P3Calibration.dll` | `Calibrate\` | Present — error is search path |
-| `ortools.dll`, `libprotobuf.dll`, `tinyxml2.dll`, `abseil_dll.dll`, `libscip.dll`, `re2.dll` | `PathOpt\` | Present — same |
-| `onnxruntime.dll`, `libsodium.dll`, `opencv_*` | `BatchDup\` | Present — same |
-| `libvkd3d-utils-1.dll` | bottle system32 | **Actually missing** — exists in runner `ge-proton11-3` (`share/default_pfx/.../system32/`) |
-
-Wine can't find the tool DLLs because the search order is: exe directory →
-system32 → PATH — and the `Calibrate/PathOpt/BatchDup` folders are not in the
-bottle's PATH (on Windows the app resolves this differently).
-
-**Fix (applied 2026-08-09): copy the tool DLLs to the exe directory** —
-first place in the search order, works without registry and without PATH (the
-Bottle console is Wine's cmd; `reg add` in `HKCU\Environment` doesn't work
-because the key doesn't exist in Wine).
-
-Single block, ready to copy and paste in a Linux terminal:
-
-```bash
-APP="/home/galvani/acmer-studio/acmer-bottle/drive_c/Program Files/ACMER Studio"
-BOTTLE="/home/galvani/acmer-studio/acmer-bottle/drive_c/windows"
+APP="/home/username/acmer-studio/acmer-bottle/drive_c/Program Files/ACMER Studio"
+BOTTLE="/home/username/acmer-studio/acmer-bottle/drive_c/windows"
 RUNNER="$HOME/.var/app/com.usebottles.bottles/data/bottles/runners/ge-proton11-3"
 
 # Tool DLLs (Calibrate/PathOpt/BatchDup) -> exe directory
@@ -211,21 +132,26 @@ cp "$RUNNER/files/share/default_pfx/drive_c/windows/syswow64/libvkd3d-utils-1.dl
 (34 DLLs + 2 from vkd3d. Revert: `rm` of the copied DLLs — only those that
 aren't from Electron; or reinstall the app.)
 
-**Validated on run 2026-08-09 14:23**: `err:module:import_dll` errors for
-opencv/ceres/ortools/tinyxml2/onnxruntime/libsodium **no longer appear**.
+**Validated on 2026-08-09**: `err:module:import_dll` errors for
+opencv/ceres/ortools/tinyxml2/onnxruntime/libsodium no longer appear.
 Calibrate/PathOpt/BatchDup tools load.
 
-`libvkd3d-utils-1.dll`: dependency of `wined3d.dll` (DXCore fallback).
-Harmless — rendering goes through DXVK. Silenced by copying from the runner
-to the bottle's system32/syswow64 (done on 2026-08-09):
+## 6. Running ACMER Studio
 
 ```bash
-cp ~/.var/app/com.usebottles.bottles/data/bottles/runners/ge-proton11-3/files/share/default_pfx/drive_c/windows/system32/libvkd3d-utils-1.dll "/home/galvani/acmer-studio/acmer-bottle/drive_c/windows/system32/"
-cp ~/.var/app/com.usebottles.bottles/data/bottles/runners/ge-proton11-3/files/share/default_pfx/drive_c/windows/syswow64/libvkd3d-utils-1.dll "/home/galvani/acmer-studio/acmer-bottle/drive_c/windows/syswow64/"
+# Bottle console
+wine /path/to/ACMERStudio.exe
 ```
 
-Errors that remain in the log (cosmetic): `network_change_notifier` (app
-searching for network), `RoGetActivationFactory PenDevice` and
-`com_get_class_object` (Windows services that don't exist in Wine),
-`QueryInterface` (DXVK noise).
-None affect functionality.
+**Validated — works:**
+
+- Interface renders correctly
+- Projects save
+- G-code export works
+
+---
+
+## Known Issues
+
+For investigated bugs (keyboard in dialogs, diagnosis, fixes), see
+[`ACMER-STUDIO-KNOWN-ISSUES.md`](ACMER-STUDIO-KNOWN-ISSUES.md).

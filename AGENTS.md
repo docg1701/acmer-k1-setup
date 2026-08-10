@@ -13,7 +13,7 @@ configuration.
 - **Server**: Debian 13 (console) + cncjs 1.11.2 (Node 20), port 8000, hostname `printbox`
 - **Webcam**: ustreamer 5.4, port 8080, MJPEG stream consumed by the cncjs widget
 - **Network**: server static IP `10.10.10.190/24`, gateway `10.10.10.1`, hostname `printbox` / `printbox.local`
-- **User**: `galvani` (server)
+- **User**: `username` (server)
 
 ## Source of Truth
 
