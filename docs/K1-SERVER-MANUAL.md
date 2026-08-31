@@ -6,14 +6,14 @@
 > off — the server handles everything, and you monitor via browser (PC or
 > phone).
 >
-> **Date**: 2026-08-08 · **cncjs v1.11.x** (verified: active releases in 2026)
+> **Date**: 2026-08-08 · **Updated**: 2026-09-01 (added BTT Pi v1.2 + Armbian variant) · **cncjs v1.11.x** (verified: active releases in 2026)
 
 ```text
 [Your PC]  Wine + LaserGRBL or ACMER Studio — design, power, export G-code
     │
     │  WiFi (local network) — only file upload
     ▼
-[mini PC]  Debian + cncjs — receives the file, streams via USB
+[mini PC / BTT Pi]  Debian or Armbian + cncjs — receives the file, streams via USB
     │  USB serial 115200
     ▼
 [K1]  GRBL — executes the job
@@ -38,6 +38,43 @@ byte by byte. Nothing is repeated on the server.
    - **Software selection**: check **SSH server** + **standard system utilities**
      — **no desktop, no GNOME/KDE** (console only; nobody will use a monitor)
 4. Reboot. Test with `ip a` — the WiFi IP should appear.
+
+### 1.1. Alternative: BTT Pi v1.2 with Armbian (stable) — use this instead of §1 if you have a BTT Pi
+
+> **Scope**: BTT Pi v1.2 is the same hardware as BigTreeTech CB1 (Allwinner H616, 1 GB RAM, AXP313A, RTL8189FTV) in Raspberry Pi form factor — same SoC, same WiFi, same USB. It uses the **CB1 Armbian image**. No separate BTT Pi image exists.
+>
+> **Power**: BTT Pi v1.2 has two exclusive options — `DC 5V±5% / 2A via USB Type-C` **or** `DC 12–24V via 2-pin screw terminals` — never both at once. When powering via USB-C, close `J8`; open it for 12–24V. USB-C is 5V + UART console (WCH340E), not K1 data — K1 uses the 4× USB-A ports.
+
+**Use only the official Armbian stable image.** Do **not** use the BTT-provided `V3.0.0` image (`CB1_Debian12_Klipper_kernel6.6_20241219.img.xz`) — its vendor kernel `6.6.66-vendor-sunxi64` has an alignment-fault bug in `page_cache_ra_unbounded` that causes random segfaults, `lzma: compressed data is corrupt`, and `dpkg` failures on any `apt upgrade` — it is not maintainable. Use the official image and install cncjs manually.
+
+1. **Download** the stable Armbian for CB1 (which is also the BTT Pi v1.2 image):
+   - **Armbian 26.8.1 Minimal (CLI) — Debian 13 Trixie — kernel `current 6.18.43` — Stable — 290 MB — Build 2026-08-08** from <https://www.armbian.com/boards/bigtreetech-cb1>
+   - Or via [Armbian Imager](https://imager.armbian.com/) → select `BigTreeTech CB1` → `Trixie Minimal`
+2. **Flash** to SD with Balena Etcher / Raspberry Pi Imager / `dd`. No need to change `fdtfile` — default `sun50i-h616-bigtreetech-cb1-sd.dtb` in `armbianEnv.txt` is correct for BTT Pi v1.2 SD. For eMMC use `...-emmc.dtb`.
+
+   **Power supply — use a proper 5V/3A PSU, not a random phone brick.** Spec is `5V±5% / 2A` minimum, `3A` recommended with headroom for K1 USB + webcam. A phone brick only works if it is a *dumb* 5V supply capable of 2–3A with a short thick USB-C cable (≤1 m, AWG 20/22); many fast chargers only deliver 3A after PD negotiation and will limit to 5V/1A on the BTT Pi (which does not do PD), causing brownouts, SD corruption, and WiFi drops. The safe lazy choice is a Raspberry Pi official `5V/3A USB-C (27W)` PSU. Do not power the board from a PC USB port, and do not connect USB-C 5V and 12–24V at the same time.
+
+   ![BTT Pi V1.2 — J8 jumper (red) next to USB-C 5V input — jumper closed = 5V via USB-C, open = 12–24V via screw terminals](../assets/btt-pi-v1.2-j8.png)
+   *J8 (red) next to the USB-C port (highlighted). Source: [BIGTREETECH Pi V1.2 User Manual, p.6](https://github.com/bigtreetech/BTT-Pi/blob/master/BIGTREETECH%20Pi%20V1.2%20User%20Manual.pdf) — excerpt.*
+3. **First boot**: serial via USB-C (`screen /dev/ttyUSB0 115200`) or HDMI+keyboard. Login `root` / `1234` → create user `username` → set hostname `printbox`:
+   ```bash
+   sudo hostnamectl set-hostname printbox
+   ```
+4. **Network (WiFi)**: Armbian uses NetworkManager, not `/etc/network/interfaces`:
+   ```bash
+   sudo armbian-config  # Network → Basic Network Setup → wlan0/wlan1 → configure
+   # or
+   sudo nmtui
+   # or nmcli:
+   sudo nmcli con add type wifi ifname wlan0 con-name printbox-wifi ssid "NETWORK-NAME" wifi-sec.key-mgmt wpa-psk wifi-sec.psk "NETWORK-PASSWORD" ipv4.method manual ipv4.addresses 10.10.10.190/24 ipv4.gateway 10.10.10.1
+   sudo nmcli con up printbox-wifi
+   ```
+   Verify with `ip a` and `ping 10.10.10.1`.
+5. **Stay on the stable kernel** — the recent ethernet regression after upgrading `6.12.68 → 6.18.33` (`sunxi_gmac.ko` missing) only affected the `edge` branch. Stay on `current` stable and hold the kernel:
+   ```bash
+   sudo apt-mark hold linux-image-current-sunxi64 linux-dtb-current-sunxi64
+   ```
+   Then continue from **§2** onwards — every other step (Node 20, cncjs, ustreamer, `dialout`, systemd, `10.10.10.190:8000`) is identical. `2.1 Disable WiFi Power Save` still applies (`wlan0` on BTT Pi). For static IP details see `2.2` note for Armbian.
 
 ---
 
@@ -93,8 +130,10 @@ sudo systemctl enable --now wifi-powersave-off.service
 
 ### 2.2. Static IP
 
+> **Armbian (BTT Pi v1.2)**: skip this file — Armbian uses NetworkManager. Use `sudo nmtui` or `sudo nmcli` as shown in §1.1. The `wifi-powersave-off.service` is still needed if you keep `wlan0`.
+
 Configure directly on Debian (without relying on router DHCP reservation).
-Edit `/etc/network/interfaces`:
+Edit `/etc/network/interfaces` (Debian mini PC only):
 
 ```bash
 sudo nano /etc/network/interfaces
@@ -369,7 +408,7 @@ In cncjs, enable the **Webcam Widget** and configure the URL:
 | Component | Where | Role |
 |---|---|---|
 | LaserGRBL / ACMER Studio | Your PC (Wine) | Design, power, **export G-code** |
-| cncjs | mini PC (Debian) | Web UI, receives file, **streams via USB** |
+| cncjs | mini PC (Debian) or BTT Pi v1.2 (Armbian) | Web UI, receives file, **streams via USB** |
 | K1 | — | Executes (GRBL) |
-| ustreamer | mini PC (Debian) | Webcam MJPEG stream (port 8080), consumed by cncjs widget |
+| ustreamer | mini PC (Debian) or BTT Pi v1.2 (Armbian) | Webcam MJPEG stream (port 8080), consumed by cncjs widget |
 | WiFi | between PC and mini PC | Only file upload (job runs locally on server) |
