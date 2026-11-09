@@ -60,14 +60,15 @@ You design at your desk, upload the job, and walk away. The server runs the mach
 
 The print server supports a live webcam feed via **ustreamer** (MJPEG stream on port 8080). The cncjs web interface has a webcam widget that consumes this stream — so you can watch the machine running from anywhere on your network.
 
-Setup is covered in the [K1-SERVER-MANUAL.md](docs/K1-SERVER-MANUAL.md) section 11.
+Setup is covered in [WEBCAM-MANUAL.md](docs/WEBCAM-MANUAL.md).
 
 ## Documents
 
 | File | Content |
 |---|---|
 | [SPECIFICATIONS-K1.md](docs/SPECIFICATIONS-K1.md) | Hardware, `$$` parameters, 7W material table |
-| [K1-SERVER-MANUAL.md](docs/K1-SERVER-MANUAL.md) | Printbox server (Debian + cncjs + webcam) |
+| [K1-SERVER-MANUAL.md](docs/K1-SERVER-MANUAL.md) | Printbox server (Debian + cncjs) |
+| [WEBCAM-MANUAL.md](docs/WEBCAM-MANUAL.md) | Webcam on the server (ustreamer + cncjs widget) |
 | [ACMER-STUDIO-BOTTLES-MANUAL.md](docs/ACMER-STUDIO-BOTTLES-MANUAL.md) | ACMER Studio on Linux (Bottles + GE-Proton) |
 | [ACMER-K1-User-Manual-EN.pdf](docs/ACMER-K1-User-Manual-EN.pdf) | Official ACMER manual (primary source) |
 

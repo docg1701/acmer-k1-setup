@@ -13,7 +13,8 @@ configuration.
 - **Server**: Debian 13 (console) + cncjs 1.11.2 (Node 20), port 8000, hostname `printbox`
 - **Webcam**: ustreamer 5.4, port 8080, MJPEG stream consumed by the cncjs widget
 - **Network**: server static IP `10.10.10.190/24`, gateway `10.10.10.1`, hostname `printbox` / `printbox.local`
-- **User**: `username` (server)
+- **User**: `username` — placeholder for the real login on the server (never a
+  literal account name in commands; units use `User=$(id -un)`)
 
 ## Source of Truth
 
@@ -48,4 +49,5 @@ cncjs --version
 - No build/test/run — documentation repo
 - Do not recommend laser control software without verifying recent maintenance
 - ACMER Studio runs on Linux via **Bottles + GE-Proton11-3** — follow `docs/ACMER-STUDIO-BOTTLES-MANUAL.md`
+- **Webcam**: ustreamer on port 8080 — follow `docs/WEBCAM-MANUAL.md`. The camera must negotiate USB high-speed (480 Mbps); at full-speed (12 Mbps) it only exposes low resolutions.
 - **No plain Wine, LaserGRBL, or Rayforge** — removed and not coming back

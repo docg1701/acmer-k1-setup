@@ -6,7 +6,7 @@
 > off — the server handles everything, and you monitor via browser (PC or
 > phone).
 >
-> **Date**: 2026-08-08 · **Updated**: 2026-09-01 (added BTT Pi v1.2 + Armbian variant) · **cncjs v1.11.x** (verified: active releases in 2026)
+> **Date**: 2026-08-08 · **Updated**: 2026-11-09 (added `User=` placeholder + webcam device-node notes) · **cncjs v1.11.x** (verified: active releases in 2026)
 
 ```text
 [Your PC]  Wine + LaserGRBL or ACMER Studio — design, power, export G-code
@@ -26,13 +26,22 @@ byte by byte. Nothing is repeated on the server.
 
 ---
 
+> **Placeholders used throughout this manual**: `username` (your login on the
+> server), `NETWORK-NAME` / `NETWORK-PASSWORD` (your WiFi). Commands that run
+> **on the server** expand them for you — the units in §3.2 and §11 use
+> `$(id -un)` and `$HOME`, so the copy-paste works with no editing. Commands you
+> type **from your PC** (`ssh`, `scp`) cannot be expanded and need your real
+> login typed in.
+
+---
+
 ## 1. Installing Debian on the mini PC
 
 1. Download **Debian netinst amd64**: <https://www.debian.org/distrib/>
 2. Flash to a USB stick (e.g.: `dd if=debian.iso of=/dev/sdX bs=4M status=progress`)
 3. Boot from the USB and install:
    - **Hostname**: `printbox`
-   - **User**: `username` + password
+   - **User**: your login name (written as `username` in this manual) + password
    - **Network**: during installation, connect to **WiFi** (the installer configures it)
    - **Partitioning**: guided, entire disk (the disk has nothing important)
    - **Software selection**: check **SSH server** + **standard system utilities**
@@ -56,7 +65,7 @@ byte by byte. Nothing is repeated on the server.
 
    ![BTT Pi V1.2 — J8 jumper (red) next to USB-C 5V input — jumper closed = 5V via USB-C, open = 12–24V via screw terminals](../assets/btt-pi-v1.2-j8.png)
    *J8 (red) next to the USB-C port (highlighted). Source: [BIGTREETECH Pi V1.2 User Manual, p.6](https://github.com/bigtreetech/BTT-Pi/blob/master/BIGTREETECH%20Pi%20V1.2%20User%20Manual.pdf) — excerpt.*
-3. **First boot**: serial via USB-C (`screen /dev/ttyUSB0 115200`) or HDMI+keyboard. Login `root` / `1234` → create user `username` → set hostname `printbox`:
+3. **First boot**: serial via USB-C (`screen /dev/ttyUSB0 115200`) or HDMI+keyboard. Login `root` / `1234` → create your user (written as `username` in this manual) → set hostname `printbox`:
    ```bash
    sudo hostnamectl set-hostname printbox
    ```
@@ -199,14 +208,18 @@ cncjs --version
 
 ```bash
 mkdir -p ~/gcode
-cat > ~/.cncrc <<'EOF'
+cat > ~/.cncrc <<EOF
 {
   "controller": "Grbl",
   "baudrates": [115200, 250000],
-  "watchDirectory": "/home/username/gcode"
+  "watchDirectory": "$HOME/gcode"
 }
 EOF
 ```
+
+> The heredoc delimiter is **unquoted** (`<<EOF`, not `<<'EOF'`) on purpose:
+> `$HOME` is substituted by the shell when the file is written, so the path
+> matches your real home and nothing needs editing.
 
 - `controller: Grbl` — the K1 is GRBL
 - `baudrates: 115200` — K1 baud rate
@@ -216,7 +229,7 @@ EOF
 ### 3.2. systemd Service (starts automatically on boot)
 
 ```bash
-sudo tee /etc/systemd/system/cncjs.service > /dev/null <<'EOF'
+sudo tee /etc/systemd/system/cncjs.service > /dev/null <<EOF
 [Unit]
 Description=cncjs web controller
 After=network-online.target
@@ -224,7 +237,8 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=username
+User=$(id -un)
+Group=$(id -un)
 ExecStart=/usr/local/bin/cncjs -H 0.0.0.0 -p 8000 --controller Grbl
 Restart=on-failure
 RestartSec=5
@@ -240,6 +254,15 @@ ss -ltn | grep 8000
 ```
 
 > If `which cncjs` shows a different path, adjust the `ExecStart`.
+>
+> **`User=$(id -un)` is deliberate, not a typo.** The heredoc delimiter is
+> unquoted (`<<EOF`), so the shell substitutes your real login when the unit is
+> written — you never edit the file by hand. Same for `Group=`. If a `User=`
+> naming a non-existent account ever gets in there, systemd refuses to spawn the
+> process with `status=217/USER` (`Failed to determine user credentials`) and,
+> with `Restart=on-failure`, retries every 5 s. From the browser this is
+> invisible: nothing listens on 8000 and the UI simply never opens. Verify with
+> `systemctl is-active cncjs` → `active`, then `ss -ltn | grep 8000` → `LISTEN`.
 
 ---
 
@@ -348,6 +371,7 @@ Verify with `iw dev wlp1s0 get power_save` and `ss -ltn | grep 8000`.
 | Symptom | Cause | Solution |
 |---|---|---|
 | Web UI won't open | cncjs not running / wrong IP | `ss -ltn \| grep 8000`; `ip a`; restart the service |
+| `systemctl status cncjs` shows `status=217/USER` | `User=` names an account that does not exist on this machine | use `User=$(id -un)` with an unquoted `<<EOF` heredoc as in §3.2; then `sudo systemctl daemon-reload && sudo systemctl restart cncjs` |
 | "No serial port found" | user not in dialout / USB loose | `sudo usermod -aG dialout $USER` + re-login; check `ls /dev/ttyACM*` |
 | Port changed after re-plugging K1 | USB re-enumeration | `sudo systemctl restart cncjs` (or udev rule, section 4) |
 | Job freezes mid-way / machine stops with laser on | WiFi power save active | `iw dev wlp1s0 get power_save` → should say `off` |
@@ -370,14 +394,20 @@ set up a VPN — do not expose the port.
 ## 11. Webcam (optional)
 
 cncjs has a webcam widget that consumes an external MJPEG stream.
-Use `ustreamer` to expose the server's USB webcam.
+Use `ustreamer` to expose the server's USB webcam. The full guide —
+installation, device-node identification, resolution negotiation, diagnostics and
+the USB high-speed requirement — is in **[WEBCAM-MANUAL.md](WEBCAM-MANUAL.md)**.
 
 ```bash
 # Install
-sudo apt install -y ustreamer
+sudo apt install -y ustreamer v4l-utils
 
-# systemd service
-sudo tee /etc/systemd/system/ustreamer.service > /dev/null <<'EOF'
+# Identify the camera node — on the BTT Pi / CB1 this is NOT /dev/video0
+v4l2-ctl --list-devices
+v4l2-ctl -d /dev/video1 --list-formats-ext   # must list the real camera modes
+
+# systemd service (unquoted heredoc: $(id -un) substitutes your login)
+sudo tee /etc/systemd/system/ustreamer.service > /dev/null <<EOF
 [Unit]
 Description=uStreamer MJPEG webcam
 After=network-online.target
@@ -385,8 +415,9 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=username
-ExecStart=/usr/bin/ustreamer --host=0.0.0.0 --port=8080 --device=/dev/video0 -r 1280x720 -f 15
+User=$(id -un)
+Group=$(id -un)
+ExecStart=/usr/bin/ustreamer --host=0.0.0.0 --port=8080 --device=/dev/video1 -r 640x480 --device-timeout 10
 Restart=on-failure
 RestartSec=5
 
@@ -398,8 +429,14 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now ustreamer.service
 ```
 
-In cncjs, enable the **Webcam Widget** and configure the URL:
-`http://10.10.10.190:8080/stream`.
+> **Two traps, both detailed in [WEBCAM-MANUAL.md](WEBCAM-MANUAL.md):** on the
+> BTT Pi v1.2 / CB1, `/dev/video0` is `cedrus` — the H616 hardware video decoder,
+> not the camera; and ustreamer's default `--device-timeout 1` is too short for
+> many cheap cameras, which makes it drop the device and serve its own black
+> `NO SIGNAL` placeholder while `/state` reports `"online": false`.
+
+In cncjs, enable the **Webcam Widget** and set the URL to
+`http://<server-ip>:8080/stream` (e.g. `http://10.10.10.190:8080/stream`).
 
 ---
 
