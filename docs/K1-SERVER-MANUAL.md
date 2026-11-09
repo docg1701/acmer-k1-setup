@@ -435,7 +435,9 @@ sudo systemctl enable --now ustreamer.service
 > many cheap cameras, which makes it drop the device and serve its own black
 > `NO SIGNAL` placeholder while `/state` reports `"online": false`.
 
-In cncjs, enable the **Webcam Widget** and set the URL to
+In cncjs, enable the **Webcam Widget** (Settings → Widgets), then in its own
+settings pick **"Connect to an IP camera"** — the default media source is the
+browser's own camera, which renders a black frame — and set the URL to
 `http://<server-ip>:8080/stream` (e.g. `http://10.10.10.190:8080/stream`).
 
 ---

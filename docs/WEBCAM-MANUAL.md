@@ -253,19 +253,60 @@ as `Using HW FPS: 0 -> 30 (coerced)`.
 
 ## 8. cncjs widget
 
-In the cncjs UI (`http://<server-ip>:8000`), enable the **Webcam Widget** and set
-its URL to the MJPEG stream:
+The widget does **not** use the stream by default. Its factory settings are:
 
-```text
-http://10.10.10.190:8080/stream
+```js
+webcam: { disabled: true, mediaSource: "local", deviceId: "", url: "" }
 ```
 
-Replace `10.10.10.190` with the server's address. Use the **same** address you
-used to open cncjs — if the page is at `10.10.10.127:8000`, the widget must use
-`10.10.10.127:8080`, not the default from another machine.
+`mediaSource: "local"` makes it grab the **browser's** own camera through
+`getUserMedia`, not ustreamer. With no device selected it renders a black
+`<video>` — indistinguishable from a broken stream, but it is not one.
+`disabled: true` means the widget is not even shown until you enable it.
 
-To check the camera without cncjs, open the same URL in a browser tab, or
-`/snapshot` for a still.
+Three steps in the cncjs UI (`http://<server-ip>:8000`):
+
+1. **Enable the widget** — Settings → **Widgets** → tick **Webcam Widget**.
+2. **Select the media source** — in the Webcam widget, open its settings:
+   - "Use a built-in camera or a connected webcam" → **wrong** (the default)
+   - **"Connect to an IP camera"** → the one you want
+3. **Set the URL** and **Save Changes**. Use the native endpoint:
+
+```text
+http://10.10.10.127:8080/stream
+```
+
+| Endpoint | Response |
+|---|---|
+| `/stream` | native ustreamer MJPEG (`multipart/x-mixed-replace`) — **use this** |
+| `/?action=stream` | mjpg-streamer compatibility alias; answers, but not needed |
+| `/snapshot` or `/?action=snapshot` | single JPEG (`image/jpeg`) |
+
+Replace `10.10.10.127` with the server's address. Use the **same** address you
+used to open cncjs — if the page is at `10.10.10.127:8000`, the widget must use
+`10.10.10.127:8080`. Never `localhost` or `0.0.0.0`: those resolve to the machine
+running the browser, not the server. The `http://0.0.0.0:8080/?action=stream`
+shown as a placeholder in the dialog is only an example.
+
+**Verify without the UI** — open the URL in a browser tab, or:
+
+```bash
+curl -sI http://<server-ip>:8080/stream      # 200, multipart/x-mixed-replace
+curl -s  http://<server-ip>:8080/snapshot -o /tmp/snap.jpg
+```
+
+Server-side confirmation that a browser is actually pulling frames:
+
+```bash
+curl -s http://127.0.0.1:8080/state | grep -o '"clients": [0-9]*'
+```
+
+`"clients": 0` means no browser is consuming the stream — the problem is in the
+widget URL, not in ustreamer. With the widget working it reports `1` or more,
+plus a per-client `fps`.
+
+> Restarting cncjs changes none of this: `disabled`, `mediaSource` and `url` are
+> widget settings, not service settings.
 
 ---
 
@@ -273,6 +314,7 @@ To check the camera without cncjs, open the same URL in a browser tab, or
 
 | Symptom | Cause | Solution |
 |---|---|---|
+| Widget black, `/state` `"clients": 0` | widget still on `mediaSource: "local"` (browser camera) or URL wrong | select **"Connect to an IP camera"** and use a URL from §8; `localhost` / `0.0.0.0` never work |
 | Widget black, `/state` `"online": false` | device not delivering frames | check `--device`; raise `--device-timeout` (default 1 s is too short) |
 | Widget shows `NO SIGNAL` | ustreamer placeholder — source offline | fix `source.online` first; it is not a cncjs problem |
 | Widget black, `/state` `online: true` but `captured_fps: 0` | device opens, no data | wrong node (§4) or full-speed link (§2) |
